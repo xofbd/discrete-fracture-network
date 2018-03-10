@@ -75,7 +75,7 @@ class FractureNetwork(object):
         self.point_sources = point_sources
 
         self.solve_pressure()
-        Delta_P = self.P[self.conn[:, 0]] - self.P[self.conn[:, 1]]
+        Delta_P = self.P[self.conn[:, 1]] - self.P[self.conn[:, 0]]
         return -self.C * Delta_P
 
 if __name__ == '__main__':
