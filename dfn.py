@@ -18,10 +18,11 @@ class FractureNetwork(object):
 
         self.n_nodes = 1 + conn.max()
 
-    def calculate_conductance(self):
+    def __calculate_conductance(self):
         self.C = fluid.rho * self.w**3 * self.H / (12 * fluid.mu * self.L)
 
-    def assemble_D(self):
+    def __assemble_D(self):
+        self.calculate_conductance()
         self.D = np.zeros((self.n_nodes, self.n_nodes))
         elemental_D = np.array([[1, -1], [-1, 1]])
 
@@ -29,33 +30,30 @@ class FractureNetwork(object):
             D_e = self.C[i] * elemental_D
             self.D[np.ix_(seg, seg)] += D_e
 
-    def assemble_f(self):
+    def __assemble_f(self):
         self.f = np.zeros(self.n_nodes)
 
         nodes = self.point_sources.keys()
         values = self.point_sources.values()
         self.f[nodes] = values
 
-    def apply_EBC(self):
+    def __apply_EBC(self):
         nodes = self.essential_bc.keys()
         values = self.essential_bc.values()
 
-        adj = -np.dot(self.D[:, nodes], values)
-        self.f += adj
+        self.f -= np.dot(self.D[:, nodes], values)
         self.f[nodes] = values
 
         self.D[nodes, :] = 0
         self.D[:, nodes] = 0
         self.D[nodes, nodes] = 1
-        return self.D, self.f
 
     def solve_pressure(self):
-        self.calculate_conductance()
-        self.assemble_D()
-        self.assemble_f()
-        D, f = self.apply_EBC()
+        self.__assemble_D()
+        self.__assemble_f()
+        self.__apply_EBC()
 
-        self.P = np.linalg.solve(D, f)
+        self.P = np.linalg.solve(self.D, self.f)
 
     def calculate_flow(self, fluid, essential_bc, point_sources):
         """ Calculate flow throughout the fracture network.
