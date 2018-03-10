@@ -22,7 +22,7 @@ class FractureNetwork(object):
         self.C = fluid.rho * self.w**3 * self.H / (12 * fluid.mu * self.L)
 
     def __assemble_D(self):
-        self.calculate_conductance()
+        self.__calculate_conductance()
         self._D = np.zeros((self.n_nodes, self.n_nodes))
         elemental_D = np.array([[1, -1], [-1, 1]])
 
@@ -88,4 +88,4 @@ if __name__ == '__main__':
     network = FractureNetwork(conn, L, H, w)
     essential_bc = {0: 1}
     point_sources = {3: -10.0}
-    P = network.calculate_flow(fluid, essential_bc, point_sources)
+    m = network.calculate_flow(fluid, essential_bc, point_sources)
