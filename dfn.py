@@ -16,7 +16,7 @@ class FractureNetwork(object):
         self.H = np.array(H)
         self.w = np.array(w)
 
-        self.n_nodes = 4
+        self.n_nodes = 1 + conn.max()
 
     def calculate_conductance(self):
         self.C = fluid.rho * self.w**3 * self.H / (12 * fluid.mu * self.L)
@@ -47,30 +47,37 @@ class FractureNetwork(object):
         self.D[nodes, :] = 0
         self.D[:, nodes] = 0
         self.D[nodes, nodes] = 1
+        return self.D, self.f
 
     def solve_pressure(self):
         self.calculate_conductance()
         self.assemble_D()
         self.assemble_f()
-        self.apply_EBC()
+        D, f = self.apply_EBC()
 
-        return np.linalg.solve(self.D, self.f)
+        self.P = np.linalg.solve(D, f)
 
     def calculate_flow(self, fluid, essential_bc, point_sources):
-        """ Calculate flow throughout fracture network.
+        """ Calculate flow throughout the fracture network.
 
         Parameters
         ----------
-        essential_bc: dict
+        fluid : dfn.Fluid
+            Fluid object containing the fluid properties
+
+        essential_bc : dict
             dictionary of node index to pressure at node
 
+        point_sources : dict
+            dictionary of node index to mass rate loss or gain
         """
+
         self.fluid = fluid
         self.essential_bc = essential_bc
         self.point_sources = point_sources
-        P = self.solve_pressure()
-        self.P = P
-        Delta_P = P[self.conn[:, 0]] - P[self.conn[:, 1]]
+
+        self.solve_pressure()
+        Delta_P = self.P[self.conn[:, 0]] - self.P[self.conn[:, 1]]
         return -self.C * Delta_P
 
 if __name__ == '__main__':
