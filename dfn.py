@@ -8,7 +8,7 @@ class Fluid(object):
         self.mu = mu
 
 
-class FractureNetwork(object):
+class FractureNetworkFlow(object):
 
     def __init__(self, conn, length, height, width):
         self.conn = np.array(conn)
@@ -118,7 +118,7 @@ if __name__ == '__main__':
     w = [1, 1, 1, 1]
 
     fluid = Fluid(1000.0, 1E-3)
-    network = FractureNetwork(conn, L, H, w)
+    network = FractureNetworkFlow(conn, L, H, w)
     essential_bc = {0: 1}
     point_sources = {3: -10.0}
     m = network.calculate_flow(fluid, essential_bc, point_sources)
