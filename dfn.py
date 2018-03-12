@@ -3,12 +3,53 @@ import numpy as np
 
 class Fluid(object):
 
+    """Fluid to flow in the fracture network.
+
+    Attributes
+    ----------
+    rho : float
+        Density of the fluid.
+
+    mu : float
+        Dynamic viscosity of the fluid.
+    """
+
     def __init__(self, rho, mu):
         self.rho = rho
         self.mu = mu
 
 
 class FractureNetworkFlow(object):
+
+    """Discrete Fracture Network model for Flow.
+
+    Parameters
+    ----------
+    conn : iterable
+        Connectivity of the network, each item is an iterable of describing the
+        inlet and outlet nodes of the segment. Its length is the number of
+        segments in the fracture network.
+
+    length : iterable
+        The length of each segment..
+
+    height: iterable
+        The thickness of each segment, the dimension orthogonal to the fracture
+        network.
+
+    width: iterable
+        The fracture width or aperture.
+
+    n_nodes: int
+        The number of nodes in the fracture network.
+
+    Attributes
+    ----------
+    conductance : numpy.ndarray
+        The conductance of each segment.
+    pressure : numpy.ndarray
+        The pressure at each node.
+    """
 
     def __init__(self, conn, length, height, width):
         self.conn = np.array(conn)
@@ -72,7 +113,7 @@ class FractureNetworkFlow(object):
 
         The pressure is solved by applying mass conservation around each node
         of the fracture network. The result is a system of equations in the
-        form of [D]{P} = {f}, where {P} is the pressure at each node.
+        form of[D]{P} = {f}, where {P} is the pressure at each node.
         """
 
         self.__assemble_D()
@@ -87,18 +128,22 @@ class FractureNetworkFlow(object):
 
         Parameters
         ----------
-        fluid : dfn.Fluid
+        fluid:
+            dfn.Fluid
             Fluid object containing the fluid properties
 
-        essential_bc : dict
+        essential_bc:
+            dict
             dictionary of node index to pressure at node
 
-        point_sources : dict
+        point_sources:
+            dict
             dictionary of node index to mass rate loss or gain
 
         Returns
         -------
-        mass flow rate : numpy.darray
+        mass flow rate:
+            numpy.ndarray
             mass flow rate for each segment of the fracture network.
         """
 
