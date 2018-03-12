@@ -19,9 +19,17 @@ class FractureNetwork(object):
         self.n_nodes = 1 + self.conn.max()
 
     def __calculate_conductance(self):
+        """Calculate the conduction for each segment of the network."""
+
         self.C = fluid.rho * self.w**3 * self.H / (12 * fluid.mu * self.L)
 
     def __assemble_D(self):
+        """Assemble the conductance (coefficient) matrix.
+
+        The conductance matrix results from applying mass conservation around
+        each node.
+        """
+
         self.__calculate_conductance()
         self._D = np.zeros((self.n_nodes, self.n_nodes))
         elemental_D = np.array([[1, -1], [-1, 1]])
@@ -31,6 +39,8 @@ class FractureNetwork(object):
             self._D[np.ix_(seg, seg)] += D_e
 
     def __assemble_f(self):
+        """Assemble the source vector."""
+
         self._f = np.zeros(self.n_nodes)
 
         nodes = self.point_sources.keys()
@@ -38,6 +48,12 @@ class FractureNetwork(object):
         self._f[nodes] = values
 
     def __apply_EBC(self):
+        """Apply essential (Dirichlet) boundary conditions.
+
+        Applying essential boundary conditions alters both the conductance
+        (coefficient) matrix and the source vector.
+        """
+
         nodes = self.essential_bc.keys()
         values = self.essential_bc.values()
 
@@ -49,6 +65,13 @@ class FractureNetwork(object):
         self._D[nodes, nodes] = 1
 
     def solve_pressure(self):
+        """Solve for the pressure at each node of the fracture network.
+
+        The pressure is solved by applying mass conservation around each node
+        of the fracture network. The result is a system of equations in the
+        form of [D]{P} = {f}, where {P} is the pressure at each node.
+        """
+
         self.__assemble_D()
         self.__assemble_f()
         self.__apply_EBC()
@@ -56,7 +79,8 @@ class FractureNetwork(object):
         self.P = np.linalg.solve(self._D, self._f)
 
     def calculate_flow(self, fluid, essential_bc, point_sources):
-        """ Calculate flow throughout the fracture network.
+        """
+        Calculate the mass flow throughout the fracture network.
 
         Parameters
         ----------
@@ -68,6 +92,11 @@ class FractureNetwork(object):
 
         point_sources : dict
             dictionary of node index to mass rate loss or gain
+
+        Returns
+        -------
+        mass flow rate : numpy.darray
+            mass flow rate for each segment of the fracture network.
         """
 
         self.fluid = fluid
@@ -76,6 +105,7 @@ class FractureNetwork(object):
 
         self.solve_pressure()
         Delta_P = self.P[self.conn[:, 1]] - self.P[self.conn[:, 0]]
+
         return -self.C * Delta_P
 
 if __name__ == '__main__':
