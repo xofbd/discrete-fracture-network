@@ -1,24 +1,6 @@
 import numpy as np
 
 
-class Fluid(object):
-
-    """Fluid to flow in the fracture network.
-
-    Attributes
-    ----------
-    rho : float
-        Density of the fluid.
-
-    mu : float
-        Dynamic viscosity of the fluid.
-    """
-
-    def __init__(self, rho, mu):
-        self.rho = rho
-        self.mu = mu
-
-
 class FractureNetworkFlow(object):
 
     """Discrete Fracture Network model for Flow.
@@ -155,15 +137,3 @@ class FractureNetworkFlow(object):
         Delta_P = self.pressure[self.conn[:, 1]] - self.P[self.conn[:, 0]]
 
         return -self.conductance * Delta_P
-
-if __name__ == '__main__':
-    conn = [(0, 1), (1, 2), (1, 2), (2, 3)]
-    L = [1, 1, 0.5, 1]
-    H = [1, 1, 1, 1]
-    w = [1, 1, 1, 1]
-
-    fluid = Fluid(1000.0, 1E-3)
-    network = FractureNetworkFlow(conn, L, H, w)
-    essential_bc = {0: 1}
-    point_sources = {3: -10.0}
-    m = network.calculate_flow(fluid, essential_bc, point_sources)
