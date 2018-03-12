@@ -10,18 +10,21 @@ class Fluid(object):
 
 class FractureNetwork(object):
 
-    def __init__(self, conn, L, H, w):
+    def __init__(self, conn, length, height, width):
         self.conn = np.array(conn)
-        self.L = np.array(L)
-        self.H = np.array(H)
-        self.w = np.array(w)
+        self.length = np.array(L)
+        self.height = np.array(H)
+        self.width = np.array(w)
 
         self.n_nodes = 1 + self.conn.max()
 
     def __calculate_conductance(self):
         """Calculate the conduction for each segment of the network."""
 
-        self.C = fluid.rho * self.w**3 * self.H / (12 * fluid.mu * self.L)
+        rho = self.fluid.rho
+        mu = self.fluid.mu
+
+        self.conductance = rho * self.w**3 * self.H / (12 * mu * self.L)
 
     def __assemble_D(self):
         """Assemble the conductance (coefficient) matrix.
@@ -35,7 +38,7 @@ class FractureNetwork(object):
         elemental_D = np.array([[1, -1], [-1, 1]])
 
         for i, seg in enumerate(self.conn):
-            D_e = self.C[i] * elemental_D
+            D_e = self.conductance[i] * elemental_D
             self._D[np.ix_(seg, seg)] += D_e
 
     def __assemble_f(self):
@@ -76,7 +79,7 @@ class FractureNetwork(object):
         self.__assemble_f()
         self.__apply_EBC()
 
-        self.P = np.linalg.solve(self._D, self._f)
+        self.pressure = np.linalg.solve(self._D, self._f)
 
     def calculate_flow(self, fluid, essential_bc, point_sources):
         """
@@ -104,9 +107,9 @@ class FractureNetwork(object):
         self.point_sources = point_sources
 
         self.solve_pressure()
-        Delta_P = self.P[self.conn[:, 1]] - self.P[self.conn[:, 0]]
+        Delta_P = self.pressure[self.conn[:, 1]] - self.P[self.conn[:, 0]]
 
-        return -self.C * Delta_P
+        return -self.conductance * Delta_P
 
 if __name__ == '__main__':
     conn = [(0, 1), (1, 2), (1, 2), (2, 3)]
