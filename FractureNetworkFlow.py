@@ -22,6 +22,9 @@ class FractureNetworkFlow(object):
     width: iterable
         The fracture width or aperture.
 
+    n_segments : int
+        The number of segments in the fracture network.
+
     n_nodes: int
         The number of nodes in the fracture network.
 
