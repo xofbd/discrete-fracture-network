@@ -39,6 +39,7 @@ class FractureNetworkFlow(object):
         self.height = np.array(H)
         self.width = np.array(w)
 
+        self.n_segments = len(conn)
         self.n_nodes = 1 + self.conn.max()
 
     def __calculate_conductance(self):
