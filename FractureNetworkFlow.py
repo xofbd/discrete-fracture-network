@@ -45,6 +45,9 @@ class FractureNetworkFlow(object):
 
         self.n_segments = len(conn)
         self.n_nodes = 1 + self.conn.max()
+        self.conductance = None
+        self.pressure = None
+        self.mass_flow = None
 
     def __calculate_conductance(self):
         """Calculate the conduction for each segment of the network."""
