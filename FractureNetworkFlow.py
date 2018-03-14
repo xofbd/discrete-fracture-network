@@ -3,8 +3,7 @@ import numpy as np
 
 class FractureNetworkFlow(object):
 
-    """
-    Discrete Fracture Network model for Flow.
+    """Discrete fracture network model for flow.
 
     Parameters
     ----------
@@ -58,10 +57,11 @@ class FractureNetworkFlow(object):
     def __assemble_D(self):
         """Assemble the conductance (coefficient) matrix."""
 
-        self.__calculate_conductance()
         D = np.zeros((self.n_nodes, self.n_nodes))
         elemental_D = np.array([[1, -1], [-1, 1]])
+        self.__calculate_conductance()
 
+        # assemble the global conductance matrix from elemental/segment parts
         for i, seg in enumerate(self.conn):
             D_e = self.conductance[i] * elemental_D
             D[np.ix_(seg, seg)] += D_e
@@ -80,7 +80,7 @@ class FractureNetworkFlow(object):
         return f
 
     def __assemble_SLAE(self):
-        """Assemble the system of linear equations (SLAE) for the network."""
+        """Assemble the system of linear algebraic equations (SLAE)."""
 
         D = __assemble_D()
         f = __assemble_f()
@@ -99,8 +99,7 @@ class FractureNetworkFlow(object):
         return D, f
 
     def solve_pressure(self):
-        """
-        Solve for the pressure at each node of the fracture network.
+        """Solve for the pressure at each node of the fracture network.
 
         The pressure is solved by applying mass conservation around each node
         of the fracture network. The result is a system of linear equations in
@@ -111,8 +110,16 @@ class FractureNetworkFlow(object):
         self.pressure = np.linalg.solve(D, f)
 
     def calculate_flow(self, fluid, essential_bc, point_sources):
-        """
-        Calculate the mass flow throughout the fracture network.
+        """Calculate the mass flow throughout the fracture network.
+
+        The mass flow is calculated by first finding the pressure at each node.
+        The flow through each segment is equal to the pressure change times
+        the conductance. The pressure change is defined as outlet minus inlet
+        pressure value of the segment, where the outlet node is the second node
+        in defining the segment's connectivity. Note, that negative values of
+        mass flow are a result of a reverse of the specified inlet and outlet
+        nodes. For example, if a segment nodes are (0, 1) and has a negative
+        mass flow, then the correct ordering is (1, 0).
 
         Parameters
         ----------
@@ -120,15 +127,19 @@ class FractureNetworkFlow(object):
             Fluid object containing the fluid's properties
 
         essential_bc : dict
-            dictionary of node index to pressure at node
+            Dictionary of node index to pressure at node for all essential
+            (Dirichlet) boundary conditions.
 
         point_sources : dict
-            dictionary of node index to mass rate loss or gain
+            Dictionary of node index to mass rate loss or gain for all point
+            sources in the system. Negative values indicate that mass is
+            removed from the system; positive values indicate that mass is
+            injected.
 
         Returns
         -------
-        mass flow rate : numpy.ndarray
-            mass flow rate for each segment of the fracture network.
+        self : object
+            Returns self
         """
 
         self.fluid = fluid
@@ -137,5 +148,6 @@ class FractureNetworkFlow(object):
 
         self.solve_pressure()
         Delta_P = self.pressure[self.conn[:, 1]] - self.P[self.conn[:, 0]]
+        self.mass_flow = -self.conductance * Delta_P
 
-        return -self.conductance * Delta_P
+        return self
