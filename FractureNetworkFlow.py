@@ -37,11 +37,11 @@ class FractureNetworkFlow(object):
         The pressure at each node.
     """
 
-    def __init__(self, conn, length, height, width):
+    def __init__(self, conn, length, thickness, width):
         self.conn = np.array(conn)
-        self.length = np.array(L)
-        self.height = np.array(H)
-        self.width = np.array(w)
+        self.length = np.array(length)
+        self.thickness = np.array(thickness)
+        self.width = np.array(width)
 
         self.n_segments = len(conn)
         self.n_nodes = 1 + self.conn.max()
@@ -52,7 +52,8 @@ class FractureNetworkFlow(object):
         rho = self.fluid.rho
         mu = self.fluid.mu
 
-        self.conductance = rho * self.w**3 * self.H / (12 * mu * self.L)
+        self.conductance = rho * self.width**3 * \
+            self.thickness / (12 * mu * self.length)
 
     def __assemble_D(self):
         """Assemble the conductance (coefficient) matrix."""
@@ -82,14 +83,14 @@ class FractureNetworkFlow(object):
     def __assemble_SLAE(self):
         """Assemble the system of linear algebraic equations (SLAE)."""
 
-        D = __assemble_D()
-        f = __assemble_f()
+        D = self.__assemble_D()
+        f = self.__assemble_f()
 
         # applying essential boundary conditions (Dirichlet)
         nodes = self.essential_bc.keys()
         values = self.essential_bc.values()
 
-        f -= np.dot(self._D[:, nodes], values)
+        f -= np.dot(D[:, nodes], values)
         f[nodes] = values
 
         D[nodes, :] = 0
@@ -147,7 +148,9 @@ class FractureNetworkFlow(object):
         self.point_sources = point_sources
 
         self.solve_pressure()
-        Delta_P = self.pressure[self.conn[:, 1]] - self.P[self.conn[:, 0]]
+        outlets = self.conn[:, 1]
+        inlets = self.conn[:, 0]
+        Delta_P = self.pressure[outlets] - self.pressure[inlets]
         self.mass_flow = -self.conductance * Delta_P
 
         return self
