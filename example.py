@@ -1,6 +1,6 @@
 if __name__ == '__main__':
-    from dfn import FluidB
-    from dfn import FractureNetworkFlow
+    from Fluid import Fluid
+    from FractureNetworkFlow import FractureNetworkFlow
 
     conn = [(0, 1), (1, 2), (1, 2), (2, 3)]
     L = [1, 1, 0.5, 1]
@@ -11,4 +11,5 @@ if __name__ == '__main__':
     network = FractureNetworkFlow(conn, L, H, w)
     essential_bc = {0: 1}
     point_sources = {3: -10.0}
-    m = network.calculate_flow(fluid, essential_bc, point_sources)
+    network.calculate_flow(fluid, essential_bc, point_sources)
+    print network.mass_flow
