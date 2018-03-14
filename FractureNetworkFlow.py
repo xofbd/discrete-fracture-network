@@ -7,7 +7,7 @@ class FractureNetworkFlow(object):
 
     Parameters
     ----------
-    conn : iterable
+    connectivity : iterable
         Connectivity of the network, each item is an iterable of describing the
         inlet and outlet nodes of the segment. Its length is the number of
         segments in the fracture network.
@@ -15,7 +15,7 @@ class FractureNetworkFlow(object):
     length : iterable
         The length of each segment..
 
-    height : iterable
+    thickness : iterable
         The thickness of each segment, the dimension orthogonal to the fracture
         network.
 
@@ -35,16 +35,19 @@ class FractureNetworkFlow(object):
 
     pressure : numpy.ndarray
         The pressure at each node.
+
+    mass_flow : numpy.ndarray
+        The mass flow rate for each segment.
     """
 
-    def __init__(self, conn, length, thickness, width):
-        self.conn = np.array(conn)
+    def __init__(self, connectivity, length, thickness, width):
+        self.connectivity = np.array(connectivity)
         self.length = np.array(length)
         self.thickness = np.array(thickness)
         self.width = np.array(width)
 
-        self.n_segments = len(conn)
-        self.n_nodes = 1 + self.conn.max()
+        self.n_segments = len(connectivity)
+        self.n_nodes = 1 + self.connectivity.max()
         self.conductance = None
         self.pressure = None
         self.mass_flow = None
@@ -65,8 +68,8 @@ class FractureNetworkFlow(object):
         elemental_D = np.array([[1, -1], [-1, 1]])
         self.__calculate_conductance()
 
-        # assemble the global conductance matrix from elemental/segment parts
-        for i, seg in enumerate(self.conn):
+        # assemble the global conductance matrix
+        for i, seg in enumerate(self.connectivity):
             D_e = self.conductance[i] * elemental_D
             D[np.ix_(seg, seg)] += D_e
 
@@ -151,8 +154,8 @@ class FractureNetworkFlow(object):
         self.point_sources = point_sources
 
         self.solve_pressure()
-        outlets = self.conn[:, 1]
-        inlets = self.conn[:, 0]
+        outlets = self.connectivity[:, 1]
+        inlets = self.connectivity[:, 0]
         Delta_P = self.pressure[outlets] - self.pressure[inlets]
         self.mass_flow = -self.conductance * Delta_P
 
