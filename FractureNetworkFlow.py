@@ -3,7 +3,8 @@ import numpy as np
 
 class FractureNetworkFlow(object):
 
-    """Discrete Fracture Network model for Flow.
+    """
+    Discrete Fracture Network model for Flow.
 
     Parameters
     ----------
@@ -15,23 +16,24 @@ class FractureNetworkFlow(object):
     length : iterable
         The length of each segment..
 
-    height: iterable
+    height : iterable
         The thickness of each segment, the dimension orthogonal to the fracture
         network.
 
-    width: iterable
+    width : iterable
         The fracture width or aperture.
-
-    n_segments : int
-        The number of segments in the fracture network.
-
-    n_nodes: int
-        The number of nodes in the fracture network.
 
     Attributes
     ----------
+    n_segments : int
+        The number of segments in the fracture network.
+
+    n_nodes : int
+        The number of nodes in the fracture network.
+
     conductance : numpy.ndarray
         The conductance of each segment.
+
     pressure : numpy.ndarray
         The pressure at each node.
     """
@@ -54,59 +56,59 @@ class FractureNetworkFlow(object):
         self.conductance = rho * self.w**3 * self.H / (12 * mu * self.L)
 
     def __assemble_D(self):
-        """Assemble the conductance (coefficient) matrix.
-
-        The conductance matrix results from applying mass conservation around
-        each node.
-        """
+        """Assemble the conductance (coefficient) matrix."""
 
         self.__calculate_conductance()
-        self._D = np.zeros((self.n_nodes, self.n_nodes))
+        D = np.zeros((self.n_nodes, self.n_nodes))
         elemental_D = np.array([[1, -1], [-1, 1]])
 
         for i, seg in enumerate(self.conn):
             D_e = self.conductance[i] * elemental_D
-            self._D[np.ix_(seg, seg)] += D_e
+            D[np.ix_(seg, seg)] += D_e
+
+        return D
 
     def __assemble_f(self):
         """Assemble the source vector."""
 
-        self._f = np.zeros(self.n_nodes)
+        f = np.zeros(self.n_nodes)
 
         nodes = self.point_sources.keys()
         values = self.point_sources.values()
-        self._f[nodes] = values
+        f[nodes] = values
 
-    def __apply_EBC(self):
-        """Apply essential (Dirichlet) boundary conditions.
+        return f
 
-        Applying essential boundary conditions alters both the conductance
-        (coefficient) matrix and the source vector.
-        """
+    def __assemble_SLAE(self):
+        """Assemble the system of linear equations (SLAE) for the network."""
 
+        D = __assemble_D()
+        f = __assemble_f()
+
+        # applying essential boundary conditions (Dirichlet)
         nodes = self.essential_bc.keys()
         values = self.essential_bc.values()
 
-        self._f -= np.dot(self._D[:, nodes], values)
-        self._f[nodes] = values
+        f -= np.dot(self._D[:, nodes], values)
+        f[nodes] = values
 
-        self._D[nodes, :] = 0
-        self._D[:, nodes] = 0
-        self._D[nodes, nodes] = 1
+        D[nodes, :] = 0
+        D[:, nodes] = 0
+        D[nodes, nodes] = 1
+
+        return D, f
 
     def solve_pressure(self):
-        """Solve for the pressure at each node of the fracture network.
+        """
+        Solve for the pressure at each node of the fracture network.
 
         The pressure is solved by applying mass conservation around each node
-        of the fracture network. The result is a system of equations in the
-        form of[D]{P} = {f}, where {P} is the pressure at each node.
+        of the fracture network. The result is a system of linear equations in
+        the form of [D]{P} = {f}, where {P} is the pressure at each node.
         """
 
-        self.__assemble_D()
-        self.__assemble_f()
-        self.__apply_EBC()
-
-        self.pressure = np.linalg.solve(self._D, self._f)
+        D, f = self.__assemble_SLAE()
+        self.pressure = np.linalg.solve(D, f)
 
     def calculate_flow(self, fluid, essential_bc, point_sources):
         """
@@ -114,22 +116,18 @@ class FractureNetworkFlow(object):
 
         Parameters
         ----------
-        fluid:
-            dfn.Fluid
-            Fluid object containing the fluid properties
+        fluid : dfn.Fluid
+            Fluid object containing the fluid's properties
 
-        essential_bc:
-            dict
+        essential_bc : dict
             dictionary of node index to pressure at node
 
-        point_sources:
-            dict
+        point_sources : dict
             dictionary of node index to mass rate loss or gain
 
         Returns
         -------
-        mass flow rate:
-            numpy.ndarray
+        mass flow rate : numpy.ndarray
             mass flow rate for each segment of the fracture network.
         """
 
