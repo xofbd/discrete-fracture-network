@@ -105,7 +105,7 @@ class FractureNetworkFlow(object):
 
         return D, f
 
-    def solve_pressure(self):
+    def __solve_pressure(self):
         """Solve for the pressure at each node of the fracture network.
 
         The pressure is solved by applying mass conservation around each node
@@ -153,7 +153,7 @@ class FractureNetworkFlow(object):
         self.essential_bc = essential_bc
         self.point_sources = point_sources
 
-        self.solve_pressure()
+        self.__solve_pressure()
         outlets = self.connectivity[:, 1]
         inlets = self.connectivity[:, 0]
         Delta_P = self.pressure[outlets] - self.pressure[inlets]
