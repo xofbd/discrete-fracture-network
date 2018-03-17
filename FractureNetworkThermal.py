@@ -37,7 +37,10 @@ class FractureNetworkThermal(FractureNetworkFlow):
 
     def construct_graph(self):
         self.graph = nx.MultiDiGraph()
-        self.graph.add_edges_from(self.connectivity)
+        conn = [(seg[0], seg[1], {'index': i})
+                for i, seg in enumerate(self.connectivity)]
+
+        self.graph.add_edges_from(conn)
 
         return self
 
