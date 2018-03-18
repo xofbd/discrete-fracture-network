@@ -70,7 +70,7 @@ class FractureNetworkThermal(FractureNetworkFlow):
         L = self.length
         cp_f = self.c_f
 
-        beta = 2 * kr * H / (m * cp_f)
+        beta = 2 * k_r * H / (m * cp_f)
         xi = beta * L / (2 * np.sqrt(alpha_r * t))
 
         for path in nx.all_simple_paths(self.graph, inlet):
