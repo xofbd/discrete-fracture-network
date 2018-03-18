@@ -1,6 +1,7 @@
 from FractureNetworkFlow import FractureNetworkFlow
 import networkx as nx
 from scipy.special import erf
+from itertools import product
 
 
 class FractureNetworkThermal(FractureNetworkFlow):
@@ -53,7 +54,20 @@ class FractureNetworkThermal(FractureNetworkFlow):
 
         return chi
 
+    def __find_paths(self, inlet):
+        n_inj = self.point_sources.keys()
+        path_nodes = set([tuple(p)
+                          for p in nx.all_simple_paths(self.graph, n_inj, inlet)])
+        path_choices = []
+
+        pass
+
     def __path_segments(self, path):
+        # get paths by nodes
+        # transform to get unique paths
+        # get paths by possible segments
+        # transform to paths
+
         pass
 
     def calculate_temperature(self, segment, length, time):
