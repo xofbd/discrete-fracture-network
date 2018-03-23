@@ -1,5 +1,6 @@
 from FractureNetworkFlow import FractureNetworkFlow
 import networkx as nx
+import numpy as np
 from scipy.special import erf
 from itertools import product
 
@@ -29,7 +30,7 @@ class FractureNetworkThermal(FractureNetworkFlow):
 
         # flip nodes if direction is wrong
         for i, seg in enumerate(self.connectivity):
-            if self.mass_flow < 0:
+            if self.mass_flow[i] < 0:
                 self.connectivity[i] = seg[::-1]
 
         self.corrected_network = True
