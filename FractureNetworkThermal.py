@@ -55,8 +55,7 @@ class FractureNetworkThermal(FractureNetworkFlow):
 
         return chi
 
-    def __find_paths(self, inlet):
-        n_inj = self.injection_node
+    def __find_paths(self, n_inj, inlet):
         path_nodes = [tuple(p)
                       for p in nx.all_simple_paths(self.graph, n_inj, inlet)]
         path_nodes = set(path_nodes)
@@ -67,35 +66,35 @@ class FractureNetworkThermal(FractureNetworkFlow):
             segment_choices = []
             for i in xrange(len(nodes) - 1):
                 seg_inlet, seg_outlet = nodes[i], nodes[i + 1]
-                d = G.get_edge_data(seg_inlet, seg_outlet)
-                segment = [val['index'] for val in d.values()]
-                segment_choices.append(segment)
+                d = self.graph.get_edge_data(seg_inlet, seg_outlet)
+                segments = [val['index'] for val in d.values()]
+                segment_choices.append(segments)
 
-                path = list(itertools.product(*segment_choices))
-                path_segments.extend(path)
+            paths = list(product(*segment_choices))
+            path_segments.extend(paths)
 
         return path_segments
 
-    def calculate_temperature(self, segment, length, time):
+    def calculate_temperature(self, fluid, segment, length, time):
         z, t = np.meshgrid(length, time)
 
         inlet = self.connectivity[segment, 0]
         outlet = self.connectivity[segment, 1]
 
-        chi = __mass_contribution()
+        chi = self.__mass_contribution()
         k_r = self.thermal_cond
         alpha_r = self.thermal_diff
         m = self.mass_flow
         H = self.thickness
         L = self.length
-        cp_f = self.c_f
+        cp_f = fluid.c_f
 
         beta = 2 * k_r * H / (m * cp_f)
         xi = beta * L / (2 * np.sqrt(alpha_r * t))
-
-        for path in nx.all_simple_paths(self.graph, inlet):
-            S_k = self.__path_segments(path)
-            chi_prod = chi[S_k].prod()
-            xi_eff = xi[S_k].sum() + beta[
-                segment] * z / (2 * np.sqrt(alpha_r * t))
-            Theta += chi_prod * erf(xi_eff)
+        return self.__find_paths(0, 2)
+       # for path in nx.all_simple_paths(self.graph, inlet):
+       #     S_k = self.__path_segments(path)
+       #     chi_prod = chi[S_k].prod()
+       #     xi_eff = xi[S_k].sum() + beta[
+       #         segment] * z / (2 * np.sqrt(alpha_r * t))
+       #     Theta += chi_prod * erf(xi_eff)
