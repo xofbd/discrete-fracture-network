@@ -55,20 +55,25 @@ class FractureNetworkThermal(FractureNetworkFlow):
         return chi
 
     def __find_paths(self, inlet):
-        n_inj = self.point_sources.keys()
-        path_nodes = set([tuple(p)
-                          for p in nx.all_simple_paths(self.graph, n_inj, inlet)])
-        path_choices = []
+        n_inj = self.injection_node
+        path_nodes = [tuple(p)
+                      for p in nx.all_simple_paths(self.graph, n_inj, inlet)]
+        path_nodes = set(path_nodes)
 
-        pass
+        # get segments in each path described by nodes
+        path_segments = []
+        for nodes in path_nodes:
+            segment_choices = []
+            for i in xrange(len(nodes) - 1):
+                seg_inlet, seg_outlet = nodes[i], nodes[i + 1]
+                d = G.get_edge_data(seg_inlet, seg_outlet)
+                segment = [val['index'] for val in d.values()]
+                segment_choices.append(segment)
 
-    def __path_segments(self, path):
-        # get paths by nodes
-        # transform to get unique paths
-        # get paths by possible segments
-        # transform to paths
+                path = list(itertools.product(*segment_choices))
+                path_segments.extend(path)
 
-        pass
+        return path_segments
 
     def calculate_temperature(self, segment, length, time):
         z, t = np.meshgrid(length, time)
