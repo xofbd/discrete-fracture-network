@@ -16,7 +16,7 @@ class Fluid(object):
         and the process.
     """
 
-    def __init__(self, rho, mu, c_f=None):
-        self.rho = rho
-        self.mu = mu
-        self.c_f = c_f
+    def __init__(self, density=None, viscosity=None, heat_capacity=None):
+        self.rho = density
+        self.mu = viscosity
+        self.c_f = heat_capacity
