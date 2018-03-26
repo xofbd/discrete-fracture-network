@@ -51,6 +51,20 @@ class FractureNetworkThermal(FractureNetworkFlow):
         return self
 
     def construct_graph(self):
+        """Construct a NetworkX graph object that represents the network.
+
+        A graph representation of the fracture network facilitates operations
+        such as finding the flow paths from the injection and a specified
+        segment. The fracture network with flow is a directed graph with
+        possible multiedges, more than one edge/segment from one node to
+        another.
+
+        Returns
+        -------
+        self : object
+            Returns self
+        """
+
         self.graph = nx.MultiDiGraph()
         conn = [(seg[0], seg[1], {'index': i})
                 for i, seg in enumerate(self.connectivity)]
