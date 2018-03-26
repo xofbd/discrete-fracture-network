@@ -31,7 +31,7 @@ class FractureNetworkThermal(FractureNetworkFlow):
         Returns
         -------
         self : object
-            Returns self
+            Returns self.
         """
 
         # raise error if mass flow needs to be calculated
@@ -62,7 +62,7 @@ class FractureNetworkThermal(FractureNetworkFlow):
         Returns
         -------
         self : object
-            Returns self
+            Returns self.
         """
 
         self.graph = nx.MultiDiGraph()
@@ -74,6 +74,12 @@ class FractureNetworkThermal(FractureNetworkFlow):
         return self
 
     def __mass_contribution(self):
+        """Calculate the segments' relative mass flow contribution.
+
+        The mass flow contribution is relative mass flow that a segment
+        constitutes to its immediate upstream segment.
+        """
+
         chi = np.zeros(self.n_segments)
 
         for i, seg in enumerate(self.connectivity):
