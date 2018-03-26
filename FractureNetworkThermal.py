@@ -20,15 +20,28 @@ class FractureNetworkThermal(FractureNetworkFlow):
         self.n_nodes = 1 + self.connectivity.max()
 
     def correct_direction(self):
+        """Correct the order of the inlet and outlet nodes (direction).
+
+        The first entry in a segment's connectivity is the inlet node and the
+        second is the segment's outlet. However, the connectivity array is
+        usually defined before one knows the flow structure in the network. If
+        the calculated flow in the segment is negative, then the designation of
+        the inlet and outlet nodes is reversed.
+
+        Returns
+        -------
+        self : object
+            Returns self
+        """
 
         # raise error if mass flow needs to be calculated
         try:
             self.mass_flow
         except AttributeError:
-            print "Network has not had mass flow calculated, call \
-            'calculate_flow' before calling this method."
+            print """Network has not had the mass flow calculated, call
+                     'calculate_flow' before calling this method."""
 
-        # flip nodes if direction is wrong
+        # flip nodes if the direction is wrong
         for i, seg in enumerate(self.connectivity):
             if self.mass_flow[i] < 0:
                 self.connectivity[i] = seg[::-1]
@@ -94,8 +107,9 @@ class FractureNetworkThermal(FractureNetworkFlow):
         Theta = 0
 
         for S_k in paths:
-            # convert tuple to list
+            # convert to list
             S_k = list(S_k)
+
             chi_prod = chi[S_k].prod()
             xi_eff = xi[S_k, :].sum(axis=0) + beta[
                 segment] * z / (2 * np.sqrt(alpha_r * t))
