@@ -55,7 +55,7 @@ class FractureNetworkThermal(FractureNetworkFlow):
 
         return chi
 
-    def __find_paths(self, n_inj, inlet):
+    def find_paths(self, n_inj, inlet):
         path_nodes = [tuple(p)
                       for p in nx.all_simple_paths(self.graph, n_inj, inlet)]
         path_nodes = set(path_nodes)
@@ -79,7 +79,6 @@ class FractureNetworkThermal(FractureNetworkFlow):
         z, t = np.meshgrid(length, time)
 
         inlet = self.connectivity[segment, 0]
-        outlet = self.connectivity[segment, 1]
 
         chi = self.__mass_contribution()
         k_r = self.thermal_cond
@@ -90,11 +89,16 @@ class FractureNetworkThermal(FractureNetworkFlow):
         cp_f = fluid.c_f
 
         beta = 2 * k_r * H / (m * cp_f)
-        xi = beta * L / (2 * np.sqrt(alpha_r * t))
-        return self.__find_paths(0, 2)
-       # for path in nx.all_simple_paths(self.graph, inlet):
-       #     S_k = self.__path_segments(path)
-       #     chi_prod = chi[S_k].prod()
-       #     xi_eff = xi[S_k].sum() + beta[
-       #         segment] * z / (2 * np.sqrt(alpha_r * t))
-       #     Theta += chi_prod * erf(xi_eff)
+        xi = np.einsum('i,jk -> ijk', beta * L, 1 / (2 * np.sqrt(alpha_r * t)))
+        paths = self.find_paths(0, inlet)
+        Theta = 0
+
+        for S_k in paths:
+            # convert tuple to list
+            S_k = list(S_k)
+            chi_prod = chi[S_k].prod()
+            xi_eff = xi[S_k, :].sum(axis=0) + beta[
+                segment] * z / (2 * np.sqrt(alpha_r * t))
+            Theta += chi_prod * erf(xi_eff)
+
+        return Theta
