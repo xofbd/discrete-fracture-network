@@ -9,15 +9,11 @@ class FractureNetworkThermal(FractureNetworkFlow):
 
     def __init__(self, connectivity, length, thickness, width, thermal_cond,
                  thermal_diff):
-        self.connectivity = np.array(connectivity)
-        self.length = np.array(length)
-        self.thickness = np.array(thickness)
-        self.width = np.array(width)
+        super(FractureNetworkThermal, self).__init__(
+            connectivity, length, thickness, width)
+
         self.thermal_cond = thermal_cond
         self.thermal_diff = thermal_diff
-
-        self.n_segments = len(connectivity)
-        self.n_nodes = 1 + self.connectivity.max()
 
     def correct_direction(self):
         """Correct the order of the inlet and outlet nodes (direction).
@@ -35,11 +31,9 @@ class FractureNetworkThermal(FractureNetworkFlow):
         """
 
         # raise error if mass flow needs to be calculated
-        try:
-            self.mass_flow
-        except AttributeError:
-            print """Network has not had the mass flow calculated, call
-                     'calculate_flow' before calling this method."""
+        if self.mass_flow is None:
+            raise TypeError("Network has not had the mass flow calculated, "
+                            "call 'calculate_flow' before calling this method.")
 
         # flip nodes if the direction is wrong
         for i, seg in enumerate(self.connectivity):
