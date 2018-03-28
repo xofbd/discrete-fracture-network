@@ -121,7 +121,7 @@ class FractureNetworkFlow(object):
         D, f = self.__assemble_SLAE()
         self.pressure = np.linalg.solve(D, f)
 
-    def calculate_flow(self, fluid, essential_bc, point_sources):
+    def calculate_flow(self, fluid, essential_bc, point_sources, correct=False):
         """Calculate the mass flow throughout the fracture network.
 
         The mass flow is calculated by first finding the pressure at each node.
@@ -148,6 +148,8 @@ class FractureNetworkFlow(object):
             removed from the system; positive values indicate that mass is
             injected.
 
+        correct : Boolean
+            Whether to correct the inlet and outlet node designation for the segments.
         Returns
         -------
         self : object
@@ -163,6 +165,9 @@ class FractureNetworkFlow(object):
         inlets = self.connectivity[:, 0]
         Delta_P = self.pressure[outlets] - self.pressure[inlets]
         self.mass_flow = -self.conductance * Delta_P
+
+        if correct:
+            correct_direction()
 
         return self
 
