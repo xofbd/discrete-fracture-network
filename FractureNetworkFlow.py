@@ -38,6 +38,10 @@ class FractureNetworkFlow(object):
 
     mass_flow : numpy.ndarray
         The mass flow rate for each segment.
+
+    corrected_network : Boolean
+        Whether the designation of inlet and outlet nodes of the segments have been
+        checked and corrected.
     """
 
     def __init__(self, connectivity, length, thickness, width):
@@ -51,6 +55,7 @@ class FractureNetworkFlow(object):
         self.conductance = None
         self.pressure = None
         self.mass_flow = None
+        self.corrected_network = False
 
     def __calculate_conductance(self):
         """Calculate the conduction for each segment of the network."""
@@ -158,5 +163,34 @@ class FractureNetworkFlow(object):
         inlets = self.connectivity[:, 0]
         Delta_P = self.pressure[outlets] - self.pressure[inlets]
         self.mass_flow = -self.conductance * Delta_P
+
+        return self
+
+        def correct_direction(self):
+            """Correct the order of the inlet and outlet nodes (direction).
+
+            The first entry in a segment's connectivity is the inlet node and the
+            second is the segment's outlet. However, the connectivity array is
+            usually defined before one knows the flow structure in the network. If
+            the calculated flow in the segment is negative, then the designation of
+            the inlet and outlet nodes is reversed.
+
+            Returns
+            -------
+            self : object
+                Returns self.
+            """
+
+        # raise error if mass flow needs to be calculated
+        if self.mass_flow is None:
+            raise TypeError("Network has not had the mass flow calculated, "
+                            "call 'calculate_flow' before calling this method.")
+
+        # flip nodes if the direction is wrong
+        for i, seg in enumerate(self.connectivity):
+            if self.mass_flow[i] < 0:
+                self.connectivity[i] = seg[::-1]
+
+        self.corrected_network = True
 
         return self

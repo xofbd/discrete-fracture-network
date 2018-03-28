@@ -14,37 +14,10 @@ class FractureNetworkThermal(FractureNetworkFlow):
 
         self.thermal_cond = thermal_cond
         self.thermal_diff = thermal_diff
+        self.graph = None
+        self.corrected_network = False
 
-    def correct_direction(self):
-        """Correct the order of the inlet and outlet nodes (direction).
-
-        The first entry in a segment's connectivity is the inlet node and the
-        second is the segment's outlet. However, the connectivity array is
-        usually defined before one knows the flow structure in the network. If
-        the calculated flow in the segment is negative, then the designation of
-        the inlet and outlet nodes is reversed.
-
-        Returns
-        -------
-        self : object
-            Returns self.
-        """
-
-        # raise error if mass flow needs to be calculated
-        if self.mass_flow is None:
-            raise TypeError("Network has not had the mass flow calculated, "
-                            "call 'calculate_flow' before calling this method.")
-
-        # flip nodes if the direction is wrong
-        for i, seg in enumerate(self.connectivity):
-            if self.mass_flow[i] < 0:
-                self.connectivity[i] = seg[::-1]
-
-        self.corrected_network = True
-
-        return self
-
-    def construct_graph(self):
+    def __construct_graph(self):
         """Construct a NetworkX graph object that represents the network.
 
         A graph representation of the fracture network facilitates operations
@@ -156,6 +129,9 @@ class FractureNetworkThermal(FractureNetworkFlow):
         Theta : numpy.array, shape = (len(distance), len(time))
             Dimensionless temperature for each distance and time pairing.
         """
+
+        if self.graph is None:
+            self.__construct_graph()
 
         z, t = np.meshgrid(distance, time)
         inlet = self.connectivity[segment, 0]
