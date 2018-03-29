@@ -15,7 +15,6 @@ class FractureNetworkThermal(FractureNetworkFlow):
         self.thermal_cond = thermal_cond
         self.thermal_diff = thermal_diff
         self.graph = None
-        self.corrected_network = False
 
     def __construct_graph(self):
         """Construct a NetworkX graph object that represents the network.
@@ -130,13 +129,23 @@ class FractureNetworkThermal(FractureNetworkFlow):
             Dimensionless temperature for each distance and time pairing.
         """
 
+        # raise error from mass flow type or value errors
+        if self.mass_flow is None:
+            raise TypeError("Network has not had the mass flow calculated, "
+                            "call 'calculate_flow' before calling this method.")
+
+        if (self.mass_flow < 0).sum() > 0:
+            raise ValueError("Network has negative mass flow values, need to correct"
+                             " node designation using 'correct_direction' method or"
+                             " set 'correct' to True in 'calculate_flow' method.")
+
         if self.graph is None:
             self.__construct_graph()
 
         z, t = np.meshgrid(distance, time)
         inlet = self.connectivity[segment, 0]
 
-        # using local variables for ease
+        # create local variables for ease
         chi = self.__mass_contribution()
         k_r = self.thermal_cond
         alpha_r = self.thermal_diff
