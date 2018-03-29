@@ -193,6 +193,8 @@ class FractureNetworkThermal(FractureNetworkFlow):
         if self.graph is None:
             self.__construct_graph()
 
+        inj_nodes = find_injection_node()
+
         z, t = np.meshgrid(distance, time)
         inlet = self.connectivity[segment, 0]
 
@@ -210,7 +212,7 @@ class FractureNetworkThermal(FractureNetworkFlow):
         xi = np.einsum('i,jk -> ijk', beta * L, 1 / (2 * np.sqrt(alpha_r * t)))
 
         # loop through each path to the segment
-        paths = self.find_paths(0, inlet)
+        paths = self.find_paths(inj_nodes, inlet)
         Theta = 0
 
         for S_k in paths:
@@ -222,3 +224,11 @@ class FractureNetworkThermal(FractureNetworkFlow):
             Theta += chi_prod * erf(xi_eff)
 
         return Theta
+
+    def find_injection_node(self):
+        """Find injection node of the graph."""
+
+        preds = self.graph
+        inj_nodes = [node for node, p in preds.items() if bool(p) is False]
+
+        return inj_nodes
