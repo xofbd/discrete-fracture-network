@@ -40,8 +40,8 @@ class FractureNetworkFlow(object):
         The mass flow rate for each segment.
 
     corrected_network : Boolean
-        Whether the designation of inlet and outlet nodes of the segments have been
-        checked and corrected.
+        Whether the designation of inlet and outlet nodes of the segments have
+        been checked and corrected.
     """
 
     def __init__(self, connectivity, length, thickness, width):
@@ -167,24 +167,24 @@ class FractureNetworkFlow(object):
         self.mass_flow = -self.conductance * Delta_P
 
         if correct:
-            correct_direction()
+            self.correct_direction()
 
         return self
 
-        def correct_direction(self):
-            """Correct the order of the inlet and outlet nodes (direction).
+    def correct_direction(self):
+        """Correct the order of the inlet and outlet nodes (direction).
 
-            The first entry in a segment's connectivity is the inlet node and the
-            second is the segment's outlet. However, the connectivity array is
-            usually defined before one knows the flow structure in the network. If
-            the calculated flow in the segment is negative, then the designation of
-            the inlet and outlet nodes is reversed.
+        The first entry in a segment's connectivity is the inlet node and the
+        second is the segment's outlet. However, the connectivity array is
+        usually defined before one knows the flow structure in the network. If
+        the calculated flow in the segment is negative, then the designation of
+        the inlet and outlet nodes is reversed.
 
-            Returns
-            -------
-            self : object
-                Returns self.
-            """
+        Returns
+        -------
+        self : object
+            Returns self.
+        """
 
         # raise error if mass flow needs to be calculated
         if self.mass_flow is None:
