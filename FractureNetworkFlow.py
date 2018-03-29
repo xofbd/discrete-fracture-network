@@ -49,7 +49,6 @@ class FractureNetworkFlow(object):
         self.length = np.array(length)
         self.thickness = np.array(thickness)
         self.width = np.array(width)
-
         self.n_segments = len(connectivity)
         self.n_nodes = 1 + self.connectivity.max()
         self.conductance = None
@@ -60,11 +59,10 @@ class FractureNetworkFlow(object):
     def __calculate_conductance(self):
         """Calculate the conduction for each segment of the network."""
 
-        rho = self.fluid.rho
-        mu = self.fluid.mu
+        num = self.fluid.rho * self.width**3 * self.thickness
+        denom = 12 * self.fluid.mu * self.length
 
-        self.conductance = rho * self.width**3 * \
-            self.thickness / (12 * mu * self.length)
+        self.conductance = num / denom
 
     def __assemble_D(self):
         """Assemble the conductance (coefficient) matrix."""
@@ -149,7 +147,9 @@ class FractureNetworkFlow(object):
             injected.
 
         correct : Boolean
-            Whether to correct the inlet and outlet node designation for the segments.
+            Whether to correct the inlet and outlet node designation for the
+            segments.
+
         Returns
         -------
         self : object
@@ -191,7 +191,7 @@ class FractureNetworkFlow(object):
             raise TypeError("Network has not had the mass flow calculated, "
                             "call 'calculate_flow' before calling this method.")
 
-        # flip nodes if the direction is wrong
+        # flip nodes if the direction is wrong (negative flow)
         for i, seg in enumerate(self.connectivity):
             if self.mass_flow[i] < 0:
                 self.connectivity[i] = seg[::-1]
