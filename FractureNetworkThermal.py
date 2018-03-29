@@ -129,9 +129,11 @@ class FractureNetworkThermal(FractureNetworkFlow):
 
         # nx.all_simple_paths returns a generator and replicate paths as a
         # result of multiedges, need unique paths and as a list of tuples.
-        path_nodes = [tuple(p)
-                      for p in nx.all_simple_paths(self.graph, n_inj, inlet)]
-        path_nodes = set(path_nodes)
+        path_nodes = set()
+        for n_inj in inj_nodes:
+            temp = [p for p in nx.all_simple_paths(self.graph, n_inj, inlet)]
+            temp = map(tuple, temp)
+            path_nodes = path_nodes.union(set(temp))
 
         # get segments in each path described by the nodes
         path_segments = []
