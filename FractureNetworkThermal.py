@@ -1,17 +1,68 @@
-from FractureNetworkFlow import FractureNetworkFlow
+from itertools import product
+
 import networkx as nx
 import numpy as np
 from scipy.special import erf
-from itertools import product
+
+from FractureNetworkFlow import FractureNetworkFlow
 
 
 class FractureNetworkThermal(FractureNetworkFlow):
+
+    """Discrete fracture network model for flow and thermal performance.
+
+    Parameters
+    ----------
+    connectivity : iterable
+        Connectivity of the network, each item is an iterable of describing the
+        inlet and outlet nodes of the segment. Its length is the number of
+        segments in the fracture network.
+
+    length : iterable
+        The length of each segment..
+
+    thickness : iterable
+        The thickness of each segment, the dimension orthogonal to the fracture
+        network.
+
+    width : iterable
+        The fracture width or aperture.
+
+    thermal_cond : float
+        Thermal conductivity of the reservoir
+
+    thermal_diff : float
+        Thermal diffusivity of the reservoir
+
+    Attributes
+    ----------
+    n_segments : int
+        The number of segments in the fracture network.
+
+    n_nodes : int
+        The number of nodes in the fracture network.
+
+    conductance : numpy.ndarray
+        The conductance of each segment.
+
+    pressure : numpy.ndarray
+        The pressure at each node.
+
+    mass_flow : numpy.ndarray
+        The mass flow rate for each segment.
+
+    corrected_network : Boolean
+        Whether the designation of inlet and outlet nodes of the segments have
+        been checked and corrected.
+
+    graph : networkx.MultiDiGraph
+        Directed graph with possible multiple edges representation of the network.
+    """
 
     def __init__(self, connectivity, length, thickness, width, thermal_cond,
                  thermal_diff):
         super(FractureNetworkThermal, self).__init__(
             connectivity, length, thickness, width)
-
         self.thermal_cond = thermal_cond
         self.thermal_diff = thermal_diff
         self.graph = None
