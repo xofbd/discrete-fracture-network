@@ -7,19 +7,19 @@ class FractureNetworkFlow(object):
 
     Parameters
     ----------
-    connectivity : iterable
-        Connectivity of the network, each item is an iterable of describing the
-        inlet and outlet nodes of the segment. Its length is the number of
-        segments in the fracture network.
+    connectivity : array-like
+        Connectivity of the network, each element is an array-like object describing
+        the inlet, first element, and outlet, second element, nodes of the segments.
+        Its length is the number of segments in the fracture network.
 
-    length : iterable
-        The length of each segment..
+    length : array-like
+        The length of each segment.
 
-    thickness : iterable
+    thickness : array-like
         The thickness of each segment, the dimension orthogonal to the fracture
         network.
 
-    width : iterable
+    width : array-like
         The fracture width or aperture.
 
     Attributes
