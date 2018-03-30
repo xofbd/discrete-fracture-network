@@ -14,12 +14,12 @@ class FractureNetworkThermal(FractureNetworkFlow):
     Parameters
     ----------
     connectivity : array-like
-        Connectivity of the network, each item is an array-like of describing the
-        inlet and outlet nodes of the segment. Its length is the number of
-        segments in the fracture network.
+        Connectivity of the network, each element is an array-like object describing
+        the inlet, first element, and outlet, second element, nodes of the segments.
+        Its length is the number of segments in the fracture network.
 
     length : array-like
-        The length of each segment..
+        The length of each segment.
 
     thickness : array-like
         The thickness of each segment, the dimension orthogonal to the fracture
@@ -29,10 +29,10 @@ class FractureNetworkThermal(FractureNetworkFlow):
         The fracture width or aperture.
 
     thermal_cond : float
-        Thermal conductivity of the reservoir
+        Thermal conductivity of the reservoir.
 
     thermal_diff : float
-        Thermal diffusivity of the reservoir
+        Thermal diffusivity of the reservoir.
 
     Attributes
     ----------
@@ -59,7 +59,7 @@ class FractureNetworkThermal(FractureNetworkFlow):
         been checked and corrected.
 
     graph : networkx.MultiDiGraph
-        Directed graph with possible multiple edges representation of the network.
+        Directed graph, with possible multiple edges, representation of the network.
     """
 
     def __init__(self, connectivity, length, thickness, width, thermal_cond,
@@ -128,15 +128,15 @@ class FractureNetworkThermal(FractureNetworkFlow):
         xi = np.einsum('i,jk -> ijk', beta * L, 1 / (2 * np.sqrt(alpha_r * t)))
 
         # loop through each path to the segment
-        paths = self.find_paths(inj_nodes, inlet)
         Theta = 0
+        paths = self.find_paths(inj_nodes, inlet)
 
         for S_k in paths:
             S_k = list(S_k)
 
             chi_prod = chi[S_k].prod()
-            xi_eff = xi[S_k, :].sum(axis=0) + beta[
-                segment] * z / (2 * np.sqrt(alpha_r * t))
+            xi_eff = xi[S_k, :].sum(axis=0) + \
+                beta[segment] * z / (2 * np.sqrt(alpha_r * t))
             Theta += chi_prod * erf(xi_eff)
 
         return Theta
