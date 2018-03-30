@@ -121,7 +121,7 @@ class FractureNetworkFlow(object):
         the form of [D]{P} = {f}, where {P} is the pressure at each node.
         """
 
-        D, f = self._assemble_SLAE()
+        D, f = self._assemble_system()
         self.pressure = np.linalg.solve(D, f)
 
     def _assemble_system(self):
