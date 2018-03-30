@@ -56,7 +56,7 @@ class FractureNetworkFlow(object):
         self.mass_flow = None
         self.corrected_network = False
 
-    def __calculate_conductance(self):
+    def _calculate_conductance(self):
         """Calculate the conduction for each segment of the network."""
 
         num = self.fluid.rho * self.width**3 * self.thickness
@@ -64,12 +64,12 @@ class FractureNetworkFlow(object):
 
         self.conductance = num / denom
 
-    def __assemble_D(self):
+    def _assemble_D(self):
         """Assemble the conductance (coefficient) matrix."""
 
         D = np.zeros((self.n_nodes, self.n_nodes))
         elemental_D = np.array([[1, -1], [-1, 1]])
-        self.__calculate_conductance()
+        self._calculate_conductance()
 
         # assemble the global conductance matrix
         for i, seg in enumerate(self.connectivity):
@@ -78,7 +78,7 @@ class FractureNetworkFlow(object):
 
         return D
 
-    def __assemble_f(self):
+    def _assemble_f(self):
         """Assemble the source vector."""
 
         f = np.zeros(self.n_nodes)
@@ -89,11 +89,11 @@ class FractureNetworkFlow(object):
 
         return f
 
-    def __assemble_SLAE(self):
+    def _assemble_SLAE(self):
         """Assemble the system of linear algebraic equations (SLAE)."""
 
-        D = self.__assemble_D()
-        f = self.__assemble_f()
+        D = self._assemble_D()
+        f = self._assemble_f()
 
         # applying essential boundary conditions (Dirichlet)
         nodes = self.essential_bc.keys()
@@ -108,7 +108,7 @@ class FractureNetworkFlow(object):
 
         return D, f
 
-    def __solve_pressure(self):
+    def _solve_pressure(self):
         """Solve for the pressure at each node of the fracture network.
 
         The pressure is solved by applying mass conservation around each node
@@ -116,7 +116,7 @@ class FractureNetworkFlow(object):
         the form of [D]{P} = {f}, where {P} is the pressure at each node.
         """
 
-        D, f = self.__assemble_SLAE()
+        D, f = self._assemble_SLAE()
         self.pressure = np.linalg.solve(D, f)
 
     def calculate_flow(self, fluid, essential_bc, point_sources, correct=False):
@@ -160,7 +160,7 @@ class FractureNetworkFlow(object):
         self.essential_bc = essential_bc
         self.point_sources = point_sources
 
-        self.__solve_pressure()
+        self._solve_pressure()
         outlets = self.connectivity[:, 1]
         inlets = self.connectivity[:, 0]
         Delta_P = self.pressure[outlets] - self.pressure[inlets]

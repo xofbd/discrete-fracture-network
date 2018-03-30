@@ -13,19 +13,19 @@ class FractureNetworkThermal(FractureNetworkFlow):
 
     Parameters
     ----------
-    connectivity : iterable
-        Connectivity of the network, each item is an iterable of describing the
+    connectivity : array-like
+        Connectivity of the network, each item is an array-like of describing the
         inlet and outlet nodes of the segment. Its length is the number of
         segments in the fracture network.
 
-    length : iterable
+    length : array-like
         The length of each segment..
 
-    thickness : iterable
+    thickness : array-like
         The thickness of each segment, the dimension orthogonal to the fracture
         network.
 
-    width : iterable
+    width : array-like
         The fracture width or aperture.
 
     thermal_cond : float
@@ -67,7 +67,7 @@ class FractureNetworkThermal(FractureNetworkFlow):
         self.thermal_diff = thermal_diff
         self.graph = None
 
-    def __construct_graph(self):
+    def _construct_graph(self):
         """Construct a NetworkX graph object that represents the network.
 
         A graph representation of the fracture network facilitates operations
@@ -90,7 +90,7 @@ class FractureNetworkThermal(FractureNetworkFlow):
 
         return self
 
-    def __mass_contribution(self):
+    def _mass_contribution(self):
         """Calculate the segments' relative mass flow contribution.
 
         The mass flow contribution is the relative mass flow that a segment
@@ -193,15 +193,15 @@ class FractureNetworkThermal(FractureNetworkFlow):
                              " set 'correct' to True in 'calculate_flow' method.")
 
         if self.graph is None:
-            self.__construct_graph()
+            self._construct_graph()
 
-        inj_nodes = find_injection_node()
+        inj_nodes = self._find_injection_node()
 
         z, t = np.meshgrid(distance, time)
         inlet = self.connectivity[segment, 0]
 
         # create local variables for ease
-        chi = self.__mass_contribution()
+        chi = self._mass_contribution()
         k_r = self.thermal_cond
         alpha_r = self.thermal_diff
         m = self.mass_flow
@@ -227,7 +227,7 @@ class FractureNetworkThermal(FractureNetworkFlow):
 
         return Theta
 
-    def find_injection_node(self):
+    def _find_injection_node(self):
         """Find injection node of the graph."""
 
         preds = self.graph
