@@ -187,7 +187,7 @@ class FractureNetworkThermal(FractureNetworkFlow):
 
         return chi
 
-    def find_paths(self, n_inj, inlet):
+    def find_paths(self, inj_nodes, inlet):
         """Find all the paths from injection node to a segment's inlet node.
 
         This method relies on NetworkX's all_simple_paths function to find the
@@ -196,8 +196,8 @@ class FractureNetworkThermal(FractureNetworkFlow):
 
         Parameters
         ----------
-        n_inj : int
-            The injection node.
+        inj_nodes : list
+            The injection nodes.
 
         inlet : int
             The inlet node of the segment of interest.
