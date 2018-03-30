@@ -8,9 +8,10 @@ class FractureNetworkFlow(object):
     Parameters
     ----------
     connectivity : array-like
-        Connectivity of the network, each element is an array-like object describing
-        the inlet, first element, and outlet, second element, nodes of the segments.
-        Its length is the number of segments in the fracture network.
+        The inlet and outlet node pairing for each segment, describing the
+        network connectivity. The first and second elements of the pair are
+        inlet and outlet node, respectively. Its length is the number of
+        segments in the fracture network.
 
     length : array-like
         The length of each segment.
