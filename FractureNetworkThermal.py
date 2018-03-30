@@ -42,6 +42,9 @@ class FractureNetworkThermal(FractureNetworkFlow):
     n_nodes : int
         The number of nodes in the fracture network.
 
+    fluid : dfn.Fluid
+        The fluid flowing through the network.
+
     conductance : numpy.ndarray
         The conductance of each segment.
 
@@ -67,6 +70,77 @@ class FractureNetworkThermal(FractureNetworkFlow):
         self.thermal_diff = thermal_diff
         self.graph = None
 
+    def calculate_temperature(self, fluid, segment, distance, time):
+        """Calculate the (dimensionless) temperature for a segment.
+
+        Parameters
+        ----------
+        fluid : dfn.Fluid
+            Fluid injected into network.
+
+        segment : int
+            Index of segment of interest.
+
+        length : array-like
+            Distances to calculate temperature for the segment, measured from
+            the segment's inlet node.
+
+        time : array-like
+            Time values to calculate the temperature for the segment, starting
+            from the start of operation.
+
+        Returns
+        -------
+        Theta : numpy.array, shape = (len(distance), len(time))
+            Dimensionless temperature for each distance and time pairing.
+        """
+
+        # raise error from mass flow type or value errors
+        if self.mass_flow is None:
+            raise TypeError("Network has not had the mass flow calculated, "
+                            "call 'calculate_flow' before calling this method.")
+
+        if (self.mass_flow < 0).sum() > 0:
+            raise ValueError("Network has negative mass flow values, need to correct"
+                             " node designation using 'correct_direction' method or"
+                             " set 'correct' to True in 'calculate_flow' method.")
+
+        if self.graph is None:
+            self._construct_graph()
+
+        self.fluid = fluid
+        inj_nodes = self._find_injection_nodes()
+
+        z, t = np.meshgrid(distance, time)
+        inlet = self.connectivity[segment, 0]
+
+        # create local variables for ease
+        chi = self._mass_contribution()
+        k_r = self.thermal_cond
+        alpha_r = self.thermal_diff
+        m = self.mass_flow
+        H = self.thickness
+        L = self.length
+        cp_f = self.fluid.c_f
+
+        # useful dimensionless parameters
+        beta = 2 * k_r * H / (m * cp_f)
+        xi = np.einsum('i,jk -> ijk', beta * L, 1 / (2 * np.sqrt(alpha_r * t)))
+
+        # loop through each path to the segment
+        paths = self.find_paths(inj_nodes, inlet)
+        Theta = 0
+
+        for S_k in paths:
+            S_k = list(S_k)
+
+            chi_prod = chi[S_k].prod()
+            xi_eff = xi[S_k, :].sum(axis=0) + beta[
+                segment] * z / (2 * np.sqrt(alpha_r * t))
+            Theta += chi_prod * erf(xi_eff)
+
+        return Theta
+
     def _construct_graph(self):
         """Construct a NetworkX graph object that represents the network.
 
@@ -89,6 +163,14 @@ class FractureNetworkThermal(FractureNetworkFlow):
         self.graph.add_edges_from(edge_data)
 
         return self
+
+    def _find_injection_nodes(self):
+        """Find injection node of the graph."""
+
+        preds = self.graph
+        inj_nodes = [node for node, p in preds.items() if bool(p) is False]
+
+        return inj_nodes
 
     def _mass_contribution(self):
         """Calculate the segments' relative mass flow contribution.
@@ -156,81 +238,3 @@ class FractureNetworkThermal(FractureNetworkFlow):
             path_segments.extend(paths)
 
         return path_segments
-
-    def calculate_temperature(self, fluid, segment, distance, time):
-        """Calculate the (dimensionless) temperature for a segment.
-
-        Parameters
-        ----------
-        fluid : dfn.Fluid
-            Fluid injected into network.
-
-        segment : int
-            Index of segment of interest.
-
-        length : array-like
-            Distances to calculate temperature for the segment, measured from
-            the segment's inlet node.
-
-        time : array-like
-            Time values to calculate the temperature for the segment, starting
-            from the start of operation.
-
-        Returns
-        -------
-        Theta : numpy.array, shape = (len(distance), len(time))
-            Dimensionless temperature for each distance and time pairing.
-        """
-
-        # raise error from mass flow type or value errors
-        if self.mass_flow is None:
-            raise TypeError("Network has not had the mass flow calculated, "
-                            "call 'calculate_flow' before calling this method.")
-
-        if (self.mass_flow < 0).sum() > 0:
-            raise ValueError("Network has negative mass flow values, need to correct"
-                             " node designation using 'correct_direction' method or"
-                             " set 'correct' to True in 'calculate_flow' method.")
-
-        if self.graph is None:
-            self._construct_graph()
-
-        inj_nodes = self._find_injection_node()
-
-        z, t = np.meshgrid(distance, time)
-        inlet = self.connectivity[segment, 0]
-
-        # create local variables for ease
-        chi = self._mass_contribution()
-        k_r = self.thermal_cond
-        alpha_r = self.thermal_diff
-        m = self.mass_flow
-        H = self.thickness
-        L = self.length
-        cp_f = fluid.c_f
-
-        # useful dimensionless parameters
-        beta = 2 * k_r * H / (m * cp_f)
-        xi = np.einsum('i,jk -> ijk', beta * L, 1 / (2 * np.sqrt(alpha_r * t)))
-
-        # loop through each path to the segment
-        paths = self.find_paths(inj_nodes, inlet)
-        Theta = 0
-
-        for S_k in paths:
-            S_k = list(S_k)
-
-            chi_prod = chi[S_k].prod()
-            xi_eff = xi[S_k, :].sum(axis=0) + beta[
-                segment] * z / (2 * np.sqrt(alpha_r * t))
-            Theta += chi_prod * erf(xi_eff)
-
-        return Theta
-
-    def _find_injection_node(self):
-        """Find injection node of the graph."""
-
-        preds = self.graph
-        inj_nodes = [node for node, p in preds.items() if bool(p) is False]
-
-        return inj_nodes

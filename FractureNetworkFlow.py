@@ -30,6 +30,9 @@ class FractureNetworkFlow(object):
     n_nodes : int
         The number of nodes in the fracture network.
 
+    fluid : dfn.Fluid
+        The fluid flowing through the network.
+
     conductance : numpy.ndarray
         The conductance of each segment.
 
@@ -51,73 +54,11 @@ class FractureNetworkFlow(object):
         self.width = np.array(width)
         self.n_segments = len(connectivity)
         self.n_nodes = 1 + self.connectivity.max()
+        self.fluid = None
         self.conductance = None
         self.pressure = None
         self.mass_flow = None
         self.corrected_network = False
-
-    def _calculate_conductance(self):
-        """Calculate the conduction for each segment of the network."""
-
-        num = self.fluid.rho * self.width**3 * self.thickness
-        denom = 12 * self.fluid.mu * self.length
-
-        self.conductance = num / denom
-
-    def _assemble_D(self):
-        """Assemble the conductance (coefficient) matrix."""
-
-        D = np.zeros((self.n_nodes, self.n_nodes))
-        elemental_D = np.array([[1, -1], [-1, 1]])
-        self._calculate_conductance()
-
-        # assemble the global conductance matrix
-        for i, seg in enumerate(self.connectivity):
-            D_e = self.conductance[i] * elemental_D
-            D[np.ix_(seg, seg)] += D_e
-
-        return D
-
-    def _assemble_f(self):
-        """Assemble the source vector."""
-
-        f = np.zeros(self.n_nodes)
-
-        nodes = self.point_sources.keys()
-        values = self.point_sources.values()
-        f[nodes] = values
-
-        return f
-
-    def _assemble_SLAE(self):
-        """Assemble the system of linear algebraic equations (SLAE)."""
-
-        D = self._assemble_D()
-        f = self._assemble_f()
-
-        # applying essential boundary conditions (Dirichlet)
-        nodes = self.essential_bc.keys()
-        values = self.essential_bc.values()
-
-        f -= np.dot(D[:, nodes], values)
-        f[nodes] = values
-
-        D[nodes, :] = 0
-        D[:, nodes] = 0
-        D[nodes, nodes] = 1
-
-        return D, f
-
-    def _solve_pressure(self):
-        """Solve for the pressure at each node of the fracture network.
-
-        The pressure is solved by applying mass conservation around each node
-        of the fracture network. The result is a system of linear equations in
-        the form of [D]{P} = {f}, where {P} is the pressure at each node.
-        """
-
-        D, f = self._assemble_SLAE()
-        self.pressure = np.linalg.solve(D, f)
 
     def calculate_flow(self, fluid, essential_bc, point_sources, correct=False):
         """Calculate the mass flow throughout the fracture network.
@@ -170,6 +111,69 @@ class FractureNetworkFlow(object):
             self.correct_direction()
 
         return self
+
+    def _solve_pressure(self):
+        """Solve for the pressure at each node of the fracture network.
+
+        The pressure is solved by applying mass conservation around each node
+        of the fracture network. The result is a system of linear equations in
+        the form of [D]{P} = {f}, where {P} is the pressure at each node.
+        """
+
+        D, f = self._assemble_SLAE()
+        self.pressure = np.linalg.solve(D, f)
+
+    def _assemble_system(self):
+        """Assemble the system of linear algebraic equations."""
+
+        D = self._assemble_D()
+        f = self._assemble_f()
+
+        # applying essential boundary conditions (Dirichlet)
+        nodes = self.essential_bc.keys()
+        values = self.essential_bc.values()
+
+        f -= np.dot(D[:, nodes], values)
+        f[nodes] = values
+
+        D[nodes, :] = 0
+        D[:, nodes] = 0
+        D[nodes, nodes] = 1
+
+        return D, f
+
+    def _assemble_D(self):
+        """Assemble the conductance (coefficient) matrix."""
+
+        D = np.zeros((self.n_nodes, self.n_nodes))
+        elemental_D = np.array([[1, -1], [-1, 1]])
+        self._calculate_conductance()
+
+        # assemble the global conductance matrix
+        for i, seg in enumerate(self.connectivity):
+            D_e = self.conductance[i] * elemental_D
+            D[np.ix_(seg, seg)] += D_e
+
+        return D
+
+    def _assemble_f(self):
+        """Assemble the source vector."""
+
+        f = np.zeros(self.n_nodes)
+
+        nodes = self.point_sources.keys()
+        values = self.point_sources.values()
+        f[nodes] = values
+
+        return f
+
+    def _calculate_conductance(self):
+        """Calculate the conduction for each segment of the network."""
+
+        num = self.fluid.rho * self.width**3 * self.thickness
+        denom = 12 * self.fluid.mu * self.length
+
+        self.conductance = num / denom
 
     def correct_direction(self):
         """Correct the order of the inlet and outlet nodes (direction).
