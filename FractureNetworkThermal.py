@@ -102,9 +102,10 @@ class FractureNetworkThermal(FractureNetworkFlow):
                             "call 'calculate_flow' before calling this method.")
 
         if (self.mass_flow < 0).sum() > 0:
-            raise ValueError("Network has negative mass flow values, need to correct"
-                             " node designation using 'correct_direction' method or"
-                             " set 'correct' to True in 'calculate_flow' method.")
+            raise ValueError("Network has negative mass flow values, need to "
+                             "correct node designation using "
+                             "'correct_direction' method or set 'correct' to "
+                             "True in 'calculate_flow' method.")
 
         if self.graph is None:
             self._construct_graph()
@@ -127,6 +128,7 @@ class FractureNetworkThermal(FractureNetworkFlow):
         # useful dimensionless parameters
         beta = 2 * k_r * H / (m * cp_f)
         xi = np.einsum('i,jk -> ijk', beta * L, 1 / (2 * np.sqrt(alpha_r * t)))
+        xi_segment = beta[segment] * z / (2 * np.sqrt(alpha_r * t))
 
         # loop through each path to the segment
         Theta = 0
@@ -136,8 +138,7 @@ class FractureNetworkThermal(FractureNetworkFlow):
             S_k = list(S_k)
 
             chi_prod = chi[S_k].prod()
-            xi_eff = xi[S_k, :].sum(axis=0) + \
-                beta[segment] * z / (2 * np.sqrt(alpha_r * t))
+            xi_eff = xi[S_k, :].sum(axis=0) + xi_segment
             Theta += chi_prod * erf(xi_eff)
 
         return Theta
@@ -168,7 +169,7 @@ class FractureNetworkThermal(FractureNetworkFlow):
     def _find_injection_nodes(self):
         """Find injection node of the graph."""
 
-        preds = self.graph
+        preds = self.graph.pred
         inj_nodes = [node for node, p in preds.items() if bool(p) is False]
 
         return inj_nodes
