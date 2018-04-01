@@ -54,12 +54,17 @@ class FractureNetworkFlow(object):
         self.thickness = np.array(thickness)
         self.width = np.array(width)
         self.n_segments = len(connectivity)
-        self.n_nodes = 1 + self.connectivity.max()
         self.fluid = None
         self.conductance = None
         self.pressure = None
         self.mass_flow = None
         self.corrected_network = False
+
+        # get number of unique nodes
+        node_set = set()
+        for a, b in self.connectivity:
+            node_set = node_set.union({a, b})
+        self.n_nodes = len(node_set)
 
     def calculate_flow(self, fluid, essential_bc, point_sources, correct=False):
         """Calculate the mass flow throughout the fracture network.
