@@ -75,13 +75,13 @@ class FractureNetworkFlow(object):
         pressure value of the segment, where the outlet node is the second node
         in defining the segment's connectivity. Note, that negative values of
         mass flow are a result of a reverse of the specified inlet and outlet
-        nodes. For example, if a segment nodes are (0, 1) and has a negative
+        nodes. For example, if a segment's nodes are (0, 1) and has a negative
         mass flow, then the correct ordering is (1, 0).
 
         Parameters
         ----------
         fluid : dfn.Fluid
-            Fluid object containing the fluid's properties
+            Fluid object containing the fluid's properties.
 
         essential_bc : dict
             Dictionary of node index to pressure at node for all essential
@@ -100,13 +100,26 @@ class FractureNetworkFlow(object):
         Returns
         -------
         self : object
-            Returns self
+            Returns self.
         """
 
+        # check inputs
+        ebc_node_set = set(essential_bc.keys())
+        ps_node_set = set(point_sources.keys())
+        problem_nodes = ebc_node_set.intersection(ps_node_set)
+
+        if bool(problem_nodes):
+            error_str = ("A node cannot have an essential boundary condition "
+                         "imposed and be a point source/sink. The problem "
+                         "nodes are {}.").format(list(problem_nodes))
+            raise ValueError(error_str)
+
+        # create object attributes
         self.fluid = fluid
         self.essential_bc = essential_bc
         self.point_sources = point_sources
 
+        # solve for pressure and then mass flow
         self._solve_pressure()
         outlets = self.connectivity[:, 1]
         inlets = self.connectivity[:, 0]
@@ -118,19 +131,18 @@ class FractureNetworkFlow(object):
 
         return self
 
-    def _solve_pressure(self):
+    def solve_pressure(self):
         """Solve for the pressure at each node of the fracture network.
 
         The pressure is solved by applying mass conservation around each node
         of the fracture network. The result is a system of linear equations in
         the form of [D]{P} = {f}, where {P} is the pressure at each node.
+
+        Returns
+        -------
+        self : object
+            Returns self.
         """
-
-        D, f = self._assemble_system()
-        self.pressure = np.linalg.solve(D, f)
-
-    def _assemble_system(self):
-        """Assemble the system of linear algebraic equations."""
 
         D = self._assemble_D()
         f = self._assemble_f()
@@ -146,7 +158,8 @@ class FractureNetworkFlow(object):
         D[:, nodes] = 0
         D[nodes, nodes] = 1
 
-        return D, f
+        self.pressure = np.linalg.solve(D, f)
+        return self
 
     def _assemble_D(self):
         """Assemble the conductance (coefficient) matrix."""
