@@ -104,8 +104,8 @@ class FractureNetworkFlow(object):
         """
 
         # check inputs
-        ebc_node_set = set(essential_bc.keys())
-        ps_node_set = set(point_sources.keys())
+        ebc_node_set = set(self.essential_bc.keys())
+        ps_node_set = set(self.point_sources.keys())
         problem_nodes = ebc_node_set.intersection(ps_node_set)
 
         if bool(problem_nodes):
@@ -114,13 +114,9 @@ class FractureNetworkFlow(object):
                          "nodes are {}.").format(list(problem_nodes))
             raise ValueError(error_str)
 
-        # create object attributes
-        self.fluid = fluid
-        self.essential_bc = essential_bc
-        self.point_sources = point_sources
-
         # solve for pressure and then mass flow
-        self._solve_pressure()
+        self.fluid = fluid
+        self._solve_pressure(essential_bc, point_sources)
         outlets = self.connectivity[:, 1]
         inlets = self.connectivity[:, 0]
         Delta_P = self.pressure[outlets] - self.pressure[inlets]
@@ -131,25 +127,20 @@ class FractureNetworkFlow(object):
 
         return self
 
-    def solve_pressure(self):
+    def _solve_pressure(self, essential_bc, point_sources):
         """Solve for the pressure at each node of the fracture network.
 
         The pressure is solved by applying mass conservation around each node
         of the fracture network. The result is a system of linear equations in
         the form of [D]{P} = {f}, where {P} is the pressure at each node.
-
-        Returns
-        -------
-        self : object
-            Returns self.
         """
 
         D = self._assemble_D()
-        f = self._assemble_f()
+        f = self._assemble_f(point_sources)
 
         # applying essential boundary conditions (Dirichlet)
-        nodes = self.essential_bc.keys()
-        values = self.essential_bc.values()
+        nodes = essential_bc.keys()
+        values = essential_bc.values()
 
         f -= np.dot(D[:, nodes], values)
         f[nodes] = values
@@ -175,13 +166,13 @@ class FractureNetworkFlow(object):
 
         return D
 
-    def _assemble_f(self):
+    def _assemble_f(self, point_sources):
         """Assemble the source vector."""
 
         f = np.zeros(self.n_nodes)
 
-        nodes = self.point_sources.keys()
-        values = self.point_sources.values()
+        nodes = point_sources.keys()
+        values = point_sources.values()
         f[nodes] = values
 
         return f
