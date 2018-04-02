@@ -104,8 +104,8 @@ class FractureNetworkFlow(object):
         """
 
         # check inputs
-        ebc_node_set = set(self.essential_bc.keys())
-        ps_node_set = set(self.point_sources.keys())
+        ebc_node_set = set(essential_bc.keys())
+        ps_node_set = set(point_sources.keys())
         problem_nodes = ebc_node_set.intersection(ps_node_set)
 
         if bool(problem_nodes):
@@ -138,7 +138,7 @@ class FractureNetworkFlow(object):
         D = self._assemble_D()
         f = self._assemble_f(point_sources)
 
-        # applying essential boundary conditions (Dirichlet)
+        # apply essential boundary conditions (Dirichlet)
         nodes = essential_bc.keys()
         values = essential_bc.values()
 
@@ -150,6 +150,7 @@ class FractureNetworkFlow(object):
         D[nodes, nodes] = 1
 
         self.pressure = np.linalg.solve(D, f)
+
         return self
 
     def _assemble_D(self):
