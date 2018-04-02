@@ -193,7 +193,7 @@ class FractureNetworkFlow(object):
         second is the segment's outlet. However, the connectivity array is
         usually defined before one knows the flow structure in the network. If
         the calculated flow in the segment is negative, then the designation of
-        the inlet and outlet nodes is reversed.
+        the inlet and outlet nodes is reversed and flow value is made positive.
 
         Returns
         -------
@@ -210,6 +210,7 @@ class FractureNetworkFlow(object):
         for i, seg in enumerate(self.connectivity):
             if self.mass_flow[i] < 0:
                 self.connectivity[i] = seg[::-1]
+                self.mass_flow[i] = -self.mass_flow[i]
 
         self.corrected_network = True
 
