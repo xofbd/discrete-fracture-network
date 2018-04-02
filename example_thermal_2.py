@@ -1,3 +1,13 @@
+# author: Don Bruce Fox
+# file name: example_thermal_2.py
+#
+# This example models the thermal performance of the fracture network with
+# fourteen segments and six paths from the injection to production node. The
+# fracture  network is the one depicted in Figure 4b of the following journal
+# article: Fox, D. B., D. L. Koch, and J. W. Tester (2016), An analytical
+# thermohydraulic model for discretely fractured geothermal reservoirs, Water
+# Resources Research, 52, 6792-6817, doi: 10.1002/2016WR018666.
+
 import matplotlib.pyplot as plt
 import numpy as np
 

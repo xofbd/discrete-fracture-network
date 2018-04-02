@@ -1,3 +1,13 @@
+# author: Don Bruce Fox
+# file name: example_thermal_1.py
+#
+# This example models the thermal performance of the fracture network with six
+# segments and two paths from the injection to production node. The fracture
+# network is the one depicted in Figure 4a of the following journal article:
+# Fox, D. B., D. L. Koch, and J. W. Tester (2016), An analytical thermohydraulic
+# model for discretely fractured geothermal reservoirs, Water Resources
+# Research, 52, 6792-6817, doi: 10.1002/2016WR018666.
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -38,6 +48,7 @@ network = FractureNetworkThermal(conn, L, H, w, k_r, alpha_r)
 essential_bc = {n_inj: P_inj}
 point_sources = {n_prod: -m_inj}
 network.calculate_flow(fluid, essential_bc, point_sources, correct=False)
+
 
 # calculate temperature and plot results
 segs_to_plot = (0, 1, 3, 5)
