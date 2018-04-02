@@ -60,7 +60,8 @@ class FractureNetworkThermal(FractureNetworkFlow):
         been checked and corrected.
 
     graph : networkx.MultiDiGraph
-        Directed graph, with possible multiple edges, representation of the network.
+        Directed graph, with possible multiple edges, representation of the
+        fracture network.
     """
 
     def __init__(self, connectivity, length, thickness, width, thermal_cond,
@@ -133,6 +134,9 @@ class FractureNetworkThermal(FractureNetworkFlow):
         # loop through each path to the segment
         Theta = 0
         paths = self.find_paths(inj_nodes, inlet)
+
+        if not paths:
+            return erf(xi_segment)
 
         for S_k in paths:
             S_k = list(S_k)
@@ -214,6 +218,7 @@ class FractureNetworkThermal(FractureNetworkFlow):
         # nx.all_simple_paths returns a generator and replicate paths as a
         # result of multiedges, need unique paths and as a list of tuples.
         path_nodes = set()
+
         for n_inj in inj_nodes:
             temp = [p for p in nx.all_simple_paths(self.graph, n_inj, inlet)]
             temp = map(tuple, temp)
