@@ -30,12 +30,14 @@ A = (2 * L[0] + 4 * L[1]) * H[0]
 n_inj = 0
 n_prod = 5
 
+# create network object
 fluid = Fluid(density=rho_w, viscosity=mu_w, heat_capacity=cp_w)
 network = FractureNetworkThermal(conn, L, H, w, k_r, alpha_r)
+
+# calculate flow in the network
 essential_bc = {n_inj: P_inj}
 point_sources = {n_prod: -m_inj}
-
-network.calculate_flow(fluid, essential_bc, point_sources, correct=True)
+network.calculate_flow(fluid, essential_bc, point_sources, correct=False)
 
 # calculate temperature and plot results
 segs_to_plot = (0, 1, 3, 5)
