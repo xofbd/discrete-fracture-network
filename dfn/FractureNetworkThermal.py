@@ -4,7 +4,7 @@ import networkx as nx
 import numpy as np
 from scipy.special import erf
 
-from FractureNetworkFlow import FractureNetworkFlow
+from dfn import FractureNetworkFlow
 
 
 class FractureNetworkThermal(FractureNetworkFlow):
