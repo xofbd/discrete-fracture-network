@@ -16,12 +16,11 @@ values are taken from the source above. The plotted results should match the
 results in Figure 7 of the source.
 """
 
-
 import matplotlib.pyplot as plt
 import numpy as np
 
-from Fluid import Fluid
-from FractureNetworkThermal import FractureNetworkThermal
+from dfn import Fluid, FractureNetworkThermal
+
 
 # fluid properties
 cp_w = 4300.0

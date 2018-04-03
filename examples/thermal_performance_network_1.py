@@ -18,8 +18,8 @@ results in Figure 6 of the source.
 import matplotlib.pyplot as plt
 import numpy as np
 
-from Fluid import Fluid
-from FractureNetworkThermal import FractureNetworkThermal
+from dfn import Fluid, FractureNetworkThermal
+
 
 # fluid properties
 cp_w = 4300.0
