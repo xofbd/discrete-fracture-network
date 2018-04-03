@@ -24,7 +24,7 @@ from Fluid import Fluid
 from FractureNetworkThermal import FractureNetworkThermal
 
 # fluid properties
-cp_w = 4300
+cp_w = 4300.0
 rho_w = 1000.0
 mu_w = 1E-3
 
@@ -77,4 +77,5 @@ plt.ylim((0, 1))
 plt.xlim((0, 3))
 plt.ylabel('$\Theta$ (-)')
 plt.xlabel('$\tau$ (-)')
+plt.minorticks_on()
 f.show()
