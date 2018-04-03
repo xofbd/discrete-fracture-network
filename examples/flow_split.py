@@ -9,13 +9,11 @@ each with a different set of aperture values, sampled from a log-normal
 distribution.
 """
 
-
 from math import log, sqrt
 
 import numpy as np
 
-from Fluid import Fluid
-from FractureNetworkFlow import FractureNetworkFlow
+from dfn import Fluid, FractureNetworkFlow
 
 
 def calculate_flow_fraction(network, essential_bc, point_sources):
