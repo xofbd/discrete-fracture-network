@@ -1,6 +1,6 @@
 """
 author: Don Bruce Fox
-file name: example_thermal_1.py
+file name: thermal_performance_network_1.py
 
 This example models the thermal performance of the fracture network with six
 segments and two paths from the injection to production node. The fracture
