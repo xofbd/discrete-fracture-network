@@ -240,7 +240,10 @@ class FractureNetworkThermal(FractureNetworkFlow):
                 segments = [val['index'] for val in d.values()]
                 segment_choices.append(segments)
 
-            # transform [[0], [1, 2]] to [(0, 1), (0, 2)]
+            # transform an array of segment options to all combination of paths
+            # of those options. For example, transform [[0], [1, 2]] to
+            # [(0, 1), (0, 2)]. The array [[0], [1, 2]] means that the fluid
+            # can flow through segment 0 and then either segment 1 or 2.
             paths = list(product(*segment_choices))
             path_segments.extend(paths)
 
