@@ -15,14 +15,12 @@ values are taken from the source above. The plotted results should match the
 results in Figure 10a of the source.
 """
 
-import time
 from math import log, sqrt
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from Fluid import Fluid
-from FractureNetworkThermal import FractureNetworkThermal
+from dfn import Fluid, FractureNetworkThermal
 
 
 def run_simulations(network, t, z, w_0, lognormal_sigma, segment):
@@ -48,7 +46,6 @@ def run_simulations(network, t, z, w_0, lognormal_sigma, segment):
 
 
 def plot_results(x, Y):
-
     # get percentile of results
     Y_50 = np.percentile(Y, 50, axis=1)
     Y_25 = np.percentile(Y, 25, axis=1)
@@ -70,6 +67,8 @@ def plot_results(x, Y):
     f.show()
 
 if __name__ == '__main__':
+    import time
+
     start_time = time.time()
     np.random.seed(0)
 
