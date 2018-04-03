@@ -1,3 +1,20 @@
+"""
+author: Don Fox
+file name: aperture_uncertainty_network_1.py
+
+This example models the effect of uncertain aperture values on the reservoir's
+thermal performance. The fracture network modeled in the script is the network
+shown in Figure 4b in the journal article:
+
+    Fox, D. B., D. L. Koch, and J. W. Tester (2016), An analytical
+    thermohydraulic model for discretely fractured geothermal reservoirs, Water
+    Resources Research, 52, 6792-6817, doi: 10.1002/2016WR018666.
+
+All values used in this example such as the thermophysical and operational
+values are taken from the source above. The plotted results should match the
+results in Figure 10b of the source.
+"""
+
 import time
 from math import log, sqrt
 
