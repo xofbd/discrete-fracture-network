@@ -5,8 +5,8 @@ setup(
     packages='dfn',
     author='Don Bruce Fox',
     author_email='dfox09@gmail.com',
-    description='An analytical thermohydraulic model for discretely fractured\
+    description='an analytical thermohydraulic model for discretely fractured\
     geothermal reservoirs',
-    install_requires=['networkx', 'numpy']
+    install_requires=['networkx', 'numpy'],
     license='MIT'
 )
