@@ -1,7 +1,9 @@
 import numpy as np
 
+from dfn import FractureNetwork
 
-class FractureNetworkFlow(object):
+
+class FractureNetworkFlow(FractureNetwork):
 
     """Discrete fracture network model for flow.
 
@@ -49,22 +51,13 @@ class FractureNetworkFlow(object):
     """
 
     def __init__(self, connectivity, length, thickness, width):
-        self.connectivity = np.array(connectivity)
-        self.length = np.array(length)
-        self.thickness = np.array(thickness)
-        self.width = np.array(width)
-        self.n_segments = len(connectivity)
+        super(FractureNetworkFlow, self).__init__(connectivity, length,
+                                                  thickness, width)
         self.fluid = None
         self.conductance = None
         self.pressure = None
         self.mass_flow = None
         self.corrected_network = False
-
-        # get number of unique nodes
-        node_set = set()
-        for a, b in self.connectivity:
-            node_set = node_set.union({a, b})
-        self.n_nodes = len(node_set)
 
     def calculate_flow(self, fluid, essential_bc, point_sources, correct=False):
         """Calculate the mass flow throughout the fracture network.
