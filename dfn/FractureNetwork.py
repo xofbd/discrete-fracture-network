@@ -39,10 +39,10 @@ class FractureNetwork(object):
         self.width = np.array(width)
         self.n_segments = len(connectivity)
 
-        self._get_number_of_nodes()
+        self._set_number_of_nodes()
         self._check_parameters()
 
-    def _get_number_of_nodes(self):
+    def _set_number_of_nodes(self):
         """Get number of unique nodes in the fracture network."""
 
         node_set = set()
@@ -55,19 +55,21 @@ class FractureNetwork(object):
     def _check_parameters(self):
         """Check that the object's parameters are valid."""
 
-        parameters = ('length', 'thickness', 'width')
+        params = ('length', 'thickness', 'width')
         error_str_1 = "The parameter(s) {} needs to be greater than zero."
         error_str_2 = ("The size of parameter(s) {} needs to be equal to the "
                        "number of segments as indicated by the connectivity.")
 
         # parameters must be positive
-        bad_params = [p for p in parameters if (getattr(self, p) <= 0).any()]
+        bad_params = [p for p in params if (getattr(self, p) <= 0).any()]
+
         if len(bad_params) > 0:
             raise ValueError(error_str_1.format(", ".join(bad_params)))
 
         # parameter size needs to be equal to the number of segments
-        bad_params = [p for p in parameters
+        bad_params = [p for p in params
                       if getattr(self, p).size != self.n_segments]
+
         if len(bad_params) > 0:
             raise ValueError(error_str_2.format(", ".join(bad_params)))
 
