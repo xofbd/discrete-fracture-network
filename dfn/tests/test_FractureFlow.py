@@ -8,6 +8,8 @@ from dfn import FractureNetwork
 
 class TestFractureNetwork(unittest.TestCase):
 
+    """Test dfn.FractureNetwork."""
+
     def __init__(self, *args, **kwargs):
         super(TestFractureNetwork, self).__init__(*args, **kwargs)
 
