@@ -21,7 +21,6 @@ class TestFractureNetwork(unittest.TestCase):
 
     def test_set_number_of_nodes(self):
         """Test determining the number of nodes in the fracture network."""
-
         self.assertEqual(self.network.n_nodes, 4)
 
     def test_check_inputs(self):
