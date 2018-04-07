@@ -59,7 +59,7 @@ class TestFractureNetworkFlow(unittest.TestCase):
 
         ratio = Delta_P_new / Delta_P
 
-        self.assertAlmostEqual(ratio, 2)
+        self.assertAlmostEqual(ratio, 2, places=12)
 
     def test_mass_flow(self):
         """Test calculating mass flow by changing network parameters."""
@@ -69,7 +69,7 @@ class TestFractureNetworkFlow(unittest.TestCase):
                                     self.point_sources)
         m = self.network.mass_flow
         self.assertEqual(m[1], m[2])
-        self.assertAlmostEqual(m[0], m[1] + m[2])
+        self.assertAlmostEqual(m[0], m[1] + m[2], places=12)
 
         # double length, double thickness
         network = copy.copy(self.network)
@@ -79,7 +79,7 @@ class TestFractureNetworkFlow(unittest.TestCase):
                                self.point_sources)
         m = network.mass_flow
         self.assertAlmostEqual(m[1], m[2])
-        self.assertAlmostEqual(m[0], m[1] + m[2])
+        self.assertAlmostEqual(m[0], m[1] + m[2], places=12)
 
         # double width, octuple length
         network = copy.copy(self.network)
@@ -88,8 +88,8 @@ class TestFractureNetworkFlow(unittest.TestCase):
         network.calculate_flow(self.fluid, self.essential_bc,
                                self.point_sources)
         m = network.mass_flow
-        self.assertAlmostEqual(m[1], m[2])
-        self.assertAlmostEqual(m[0], m[1] + m[2])
+        self.assertAlmostEqual(m[1], m[2], places=12)
+        self.assertAlmostEqual(m[0], m[1] + m[2], places=12)
 
     def test_correct_flow(self):
         """Test that the flow and connectivity is corrected."""
