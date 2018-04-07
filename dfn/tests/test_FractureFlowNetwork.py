@@ -1,8 +1,9 @@
-import unittest
-from dfn import Fluid, FractureNetworkFlow
-from math import fabs
 import copy
+import unittest
+
 import numpy as np
+
+from dfn import Fluid, FractureNetworkFlow
 
 
 class TestFractureNetworkFlow(unittest.TestCase):
