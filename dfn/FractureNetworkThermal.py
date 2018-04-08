@@ -100,7 +100,8 @@ class FractureNetworkThermal(FractureNetworkFlow):
         # raise error from mass flow type or value errors
         if self.mass_flow is None:
             raise TypeError("Network has not had the mass flow calculated, "
-                            "call 'calculate_flow' before calling this method.")
+                            "call 'calculate_flow' before calling this "
+                            "method.")
 
         if (self.mass_flow < 0).sum() > 0:
             raise ValueError("Network has negative mass flow values, need to "
