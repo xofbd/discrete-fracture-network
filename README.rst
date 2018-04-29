@@ -1,3 +1,6 @@
+.. image:: https://travis-ci.org/xofbd/discrete-fracture-network.svg?branch=master
+:target: https://travis-ci.org/xofbd/discrete-fracture-network
+
 Discrete Fracture Network
 =========================
 An analytical thermohydraulic model for discretely fractured geothermal
