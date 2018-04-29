@@ -7,7 +7,7 @@ setup(
     author_email='dfox09@gmail.com',
     description='an analytical thermohydraulic model for discretely fractured\
     geothermal reservoirs',
-    install_requires=['networkx', 'numpy'],
+    install_requires=['networkx', 'numpy', 'scipy'],
     test_suite='nose.collector',
     test_require=['nose'],
     license='MIT'
