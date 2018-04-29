@@ -1,5 +1,5 @@
-.. image:: https://travis-ci.org/xofbd/discrete-fracture-network.svg?branch=master
-:target: https://travis-ci.org/xofbd/discrete-fracture-network
+.. |Travis| image:: https://travis-ci.org/xofbd/discrete-fracture-network.svg?branch=master
+.. _Travis: https://travis-ci.org/xofbd/discrete-fracture-network
 
 Discrete Fracture Network
 =========================
