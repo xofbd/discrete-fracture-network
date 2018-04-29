@@ -8,5 +8,7 @@ setup(
     description='an analytical thermohydraulic model for discretely fractured\
     geothermal reservoirs',
     install_requires=['networkx', 'numpy'],
+    test_suite='nose.collector',
+    test_require=['nose'],
     license='MIT'
 )
