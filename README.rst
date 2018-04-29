@@ -9,7 +9,7 @@ model for discretely fractured geothermal reservoirs, Water Resources Research,
 Prerequisites
 -------------
 You will need to have the following Python packages installed:
-``networkx, numpy, scipy``
+``networkx, numpy, scipy``.
 You can easily download and install these packages by running ``pip install package-name``, where "package-name" is the name of the desired package.
 
 Installing
@@ -18,7 +18,7 @@ To install the package, clone the repo and run ``python setup.py install``.
 
 Usage
 -----
-Here is a short example of creating a simple network::
+Here is a short example of creating a simple network.
   >>> import dfn
   >>> conn = [(0, 1), (1, 2), (1, 2), (2, 3)]
   >>> L = [100., 500., 500., 100.]
