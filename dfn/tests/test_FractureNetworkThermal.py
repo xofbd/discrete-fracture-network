@@ -55,7 +55,7 @@ class TestFractureNetworkThermal(unittest.TestCase):
 
         P_0 = 0.0
         m_inj = 50.0
-        
+
         network_1.calculate_flow(self.fluid, {0: P_0}, {5: -m_inj})
         network_2.calculate_flow(self.fluid, {0: P_0}, {10: -m_inj})
 
@@ -68,20 +68,19 @@ class TestFractureNetworkThermal(unittest.TestCase):
 
         for seg in segments:
             inlet, outlet = conn[seg]
-            conn[seg,:] = outlet, inlet
+            conn[seg, :] = outlet, inlet
 
         network.connectivity = conn
         return network
 
     def test_no_mass_flow(self):
         """Test if TypeError is raised for networks without flow calculated."""
-        network_1, network_2 = self.copy_networks()
 
         with self.assertRaises(TypeError):
-            network_1.mass_flow()
+            self.network_1._check_if_calculated()
 
         with self.assertRaises(TypeError):
-            network_2.mass_flow()
+            self.network_2._check_if_calculated()
 
     def test_neg_mass_flow(self):
         """Test if valueError is raised for networks with negative flow."""
@@ -168,8 +167,6 @@ class TestFractureNetworkThermal(unittest.TestCase):
         """Test find_paths method."""
 
         network_1, network_2 = self.networks_with_flow()
-        network_1._construct_graph()
-        network_2._construct_graph()
 
         path_1 = {(0, 1, 3), (0, 2, 4)}
         path_2 = {(0, 1, 2, 5, 10), (0, 1, 4, 7, 10), (0, 3, 6, 7, 10),
@@ -177,6 +174,41 @@ class TestFractureNetworkThermal(unittest.TestCase):
 
         self.assertEqual(path_1, set(network_1.find_paths(0, 4)))
         self.assertEqual(path_2, set(network_2.find_paths(0, 9)))
+
+    def test_calculate_temperature_inlet_segment(self):
+        """Test calculate_temperature ability to handle the inlet segment."""
+
+        # operational parameters for temperature
+        t_end = 86400 * 365.25 * 20
+        time = t_end * np.linspace(1.0 / 100, 1.0, 100)
+
+        distance = np.linspace(0.0, 100.0, 100)
+        z, t = np.meshgrid(distance, time)
+
+        network_1, network_2 = self.networks_with_flow()
+
+        # create parameters for temperature manually
+        m_1 = network_1.mass_flow[0]
+        m_2 = network_2.mass_flow[0]
+        beta_1 = 2 * network_1.thermal_cond * network_1.thickness[0] / \
+            (m_1 * network_1.fluid.c_f)
+        beta_2 = 2 * network_2.thermal_cond * network_2.thickness[0] / \
+            (m_2 * network_2.fluid.c_f)
+
+        xi_1 = beta_1 * z / (2 * np.sqrt(network_1.thermal_diff * t))
+        xi_2 = beta_2 * z / (2 * np.sqrt(network_2.thermal_diff * t))
+
+        Theta_1 = erf(xi_1)
+        Theta_2 = erf(xi_2)
+
+        # difference between manual and automatic construction
+        diff_1 = Theta_1 - network_1.calculate_temperature(self.fluid, 0,
+                                                           distance, time)
+        diff_2 = Theta_2 - network_2.calculate_temperature(self.fluid, 0,
+                                                           distance, time)
+
+        self.assertAlmostEqual((diff_1**2).sum() / (Theta_1**2).sum(), 0, 12)
+        self.assertAlmostEqual((diff_2**2).sum() / (Theta_2**2).sum(), 0, 12)
 
     def test_calculate_temperature(self):
         """Test calculate_temperature by constructing manual the equations."""
@@ -207,20 +239,20 @@ class TestFractureNetworkThermal(unittest.TestCase):
                          1 / (2 * np.sqrt(network_1.thermal_diff * t)))
         xi_2 = np.einsum('i,jk->ijk', beta_2 * network_2.length,
                          1 / (2 * np.sqrt(network_2.thermal_diff * t)))
-        a = xi_1[[0, 2, 4],:,:].sum(axis=0)
-        b = xi_1[[0, 1, 3],:,:].sum(axis=0)
+        a = xi_1[[0, 2, 4], :, :].sum(axis=0)
+        b = xi_1[[0, 1, 3], :, :].sum(axis=0)
         xi_seg = beta_1[-1] * z / (2 * np.sqrt(network_1.thermal_diff * t))
 
         Theta_1 = chi_1[0] * chi_1[2] * chi_1[4] * erf(a + xi_seg) + \
             chi_1[0] * chi_1[1] * chi_1[3] * erf(b + xi_seg)
 
-        a = xi_2[[0, 1, 2, 5, 10],:,:].sum(axis=0)
-        b = xi_2[[0, 1, 4, 7, 10],:,:].sum(axis=0)
-        c = xi_2[[0, 3, 6, 7, 10],:,:].sum(axis=0)
-        d = xi_2[[0, 3, 6, 9, 12],:,:].sum(axis=0)
-        e = xi_2[[0, 3, 8, 11, 12],:,:].sum(axis=0)
-        f = xi_2[[0, 1, 4, 9, 12],:,:].sum(axis=0)
-        
+        a = xi_2[[0, 1, 2, 5, 10], :, :].sum(axis=0)
+        b = xi_2[[0, 1, 4, 7, 10], :, :].sum(axis=0)
+        c = xi_2[[0, 3, 6, 7, 10], :, :].sum(axis=0)
+        d = xi_2[[0, 3, 6, 9, 12], :, :].sum(axis=0)
+        e = xi_2[[0, 3, 8, 11, 12], :, :].sum(axis=0)
+        f = xi_2[[0, 1, 4, 9, 12], :, :].sum(axis=0)
+
         C_1 = chi_2[0] * chi_2[1] * chi_2[2] * chi_2[5] * chi_2[10]
         C_2 = chi_2[0] * chi_2[1] * chi_2[4] * chi_2[7] * chi_2[10]
         C_3 = chi_2[0] * chi_2[3] * chi_2[6] * chi_2[7] * chi_2[10]

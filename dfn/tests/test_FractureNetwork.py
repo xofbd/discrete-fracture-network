@@ -23,23 +23,22 @@ class TestFractureNetwork(unittest.TestCase):
         """Test determining the number of nodes in the fracture network."""
         self.assertEqual(self.network.n_nodes, 4)
 
-    def test_check_inputs(self):
+    def test_check_parameters(self):
         """Test checking valid inputs, same size and greater than zero."""
 
         for attr in ('length', 'thickness', 'width'):
-            # FractureNetwork objects with bad attributes (ValueError)
-            network_wrong_n_nodes = copy.copy(self.network)
-            network_neg_value = copy.copy(self.network)
-            network_zero_value = copy.copy(self.network)
+            # create FractureNetwork objects with bad attributes (ValueError)
+            net_wrong_n_nodes = copy.copy(self.network)
+            net_neg_value = copy.copy(self.network)
+            net_zero_value = copy.copy(self.network)
 
-            setattr(network_wrong_n_nodes, attr, np.array(range(1, 4)))
-            setattr(network_neg_value, attr, np.array([-1, 2, 3, 4]))
-            setattr(network_neg_value, attr, np.array([0, 2, 3, 4]))
+            setattr(net_wrong_n_nodes, attr, np.array(range(1, 4)))
+            setattr(net_neg_value, attr, np.array([-1, 2, 3, 4]))
+            setattr(net_zero_value, attr, np.array([0, 2, 3, 4]))
 
-            with self.assertRaises(ValueError):
-                network_wrong_n_nodes._check_parameters()
-                network_neg_value._check_parameters()
-                network_zero_value._check_parameters()
+            for network in (net_wrong_n_nodes, net_neg_value, net_zero_value):
+                with self.assertRaises(ValueError):
+                    network._check_parameters()
 
 if __name__ == '__main__':
     unittest.main()
