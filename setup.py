@@ -2,6 +2,7 @@ from setuptools import setup
 
 setup(
     name='dfn',
+    version='1.0.0',
     packages=['dfn'],
     author='Don Bruce Fox',
     author_email='dfox09@gmail.com',
