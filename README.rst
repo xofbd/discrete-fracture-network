@@ -1,7 +1,10 @@
-|Travis|_
+|Travis|_ |Codecov|_
 
 .. |Travis| image:: https://travis-ci.org/xofbd/discrete-fracture-network.svg?branch=master
 .. _Travis: https://travis-ci.org/xofbd/discrete-fracture-network
+
+.. |Codecov| image:: https://codecov.io/gh/xofbd/discrete-fracture-network/branch/master/graph/badge.svg
+.. _Codecov: https://codecov.io/gh/xofbd/discrete-fracture-network
 
 Discrete Fracture Network
 =========================
