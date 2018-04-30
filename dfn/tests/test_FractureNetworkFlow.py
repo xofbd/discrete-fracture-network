@@ -94,6 +94,10 @@ class TestFractureNetworkFlow(unittest.TestCase):
     def test_correct_flow(self):
         """Test that the flow and connectivity is corrected."""
 
+        # check TypeError when mass flow has not been calculated
+        with self.assertRaises(TypeError):
+            self.network.correct_direction()
+
         # rearrange inlet-outlet designation to get negative flow values
         network = copy.copy(self.network)
         inlet, outlet = network.connectivity[1]
