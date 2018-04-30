@@ -201,7 +201,6 @@ class FractureNetworkFlow(FractureNetwork):
         if self.mass_flow is None:
             error_str = ("Network has not had the mass flow calculated, call "
                          "'calculate_flow' before calling this method.")
-
             raise TypeError(error_str)
 
         # flip nodes if the direction is wrong (negative flow)
