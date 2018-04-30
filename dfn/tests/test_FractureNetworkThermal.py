@@ -166,7 +166,11 @@ class TestFractureNetworkThermal(unittest.TestCase):
     def test_find_paths(self):
         """Test find_paths method."""
 
+        # .find_paths method calls .construct_graph if needed. Manually call
+        # .construct_graph() on one network for testing both True and False
+        # conditions
         network_1, network_2 = self.networks_with_flow()
+        network_1._construct_graph()
 
         path_1 = {(0, 1, 3), (0, 2, 4)}
         path_2 = {(0, 1, 2, 5, 10), (0, 1, 4, 7, 10), (0, 3, 6, 7, 10),
