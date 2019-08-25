@@ -1,0 +1,6 @@
+1. Python3
+2. custom exceptions
+3. remove fluid class
+4. read from JSON option
+5. move to pytest and use fixtures
+6. specify package version numbers

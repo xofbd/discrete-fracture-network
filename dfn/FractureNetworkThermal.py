@@ -249,7 +249,7 @@ class FractureNetworkThermal(FractureNetworkFlow):
             # get all segments described by each inlet-outlet node pairing
             segment_choices = []
 
-            for i in xrange(len(nodes) - 1):
+            for i in range(len(nodes) - 1):
                 seg_inlet, seg_outlet = nodes[i], nodes[i + 1]
 
                 # dictionary of segments with the inlet-outlet node paring

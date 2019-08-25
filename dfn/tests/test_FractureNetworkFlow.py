@@ -30,7 +30,7 @@ class TestFractureNetworkFlow(unittest.TestCase):
     def test_ebc_and_point_sources_inputs(self):
         """Test raising error for a point source and EBC on the same node."""
 
-        m_inj = -self.point_sources.values()[0]
+        m_inj = -list(self.point_sources.values())[0]
         point_sources = {0: -m_inj}
 
         with self.assertRaises(ValueError):
@@ -40,14 +40,14 @@ class TestFractureNetworkFlow(unittest.TestCase):
     def test_pressure_ebc(self):
         """Test applying pressure EBC on a node."""
 
-        P_0 = self.essential_bc.values()[0]
+        P_0 = list(self.essential_bc.values())[0]
         self.network._solve_pressure(self.essential_bc, self.point_sources)
         self.assertEqual(P_0, self.network.pressure[0])
 
     def test_solve_pressure(self):
         """Test behavior of solving for the pressure."""
 
-        m_inj = -self.point_sources.values()[0]
+        m_inj = -list(self.point_sources.values())[0]
         point_sources_double = {3: -2 * m_inj}
 
         # pressure should double when doubling the flow
@@ -109,6 +109,7 @@ class TestFractureNetworkFlow(unittest.TestCase):
                                self.point_sources, correct=True)
 
         self.assertTrue((network.mass_flow >= 0).any())
+
 
 if __name__ == '__main__':
     unittest.main()
