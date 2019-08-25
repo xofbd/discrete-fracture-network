@@ -1,4 +1,4 @@
-from base import Base
+from dfn import Base
 
 
 class Fluid(Base):
@@ -26,4 +26,4 @@ class Fluid(Base):
 
     def __eq__(self, other):
         attributes = ['rho', 'mu', 'c_f']
-        return _check_attr_equality(self, other, attributes)
+        return self._check_attr_equality(other, attributes)

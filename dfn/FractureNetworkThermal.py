@@ -268,9 +268,9 @@ class FractureNetworkThermal(FractureNetworkFlow):
         return path_segments
 
     def __eq__(self, other):
-        if not super(FractureNetworkThermal).__eq__(self, other):
+        if not super(FractureNetworkThermal, self).__eq__(other):
             return False
 
         attributes = ['thermal_cond', 'thermal_diff', 'graph']
 
-        return _check_attr_equality(self, other, attributes)
+        return self._check_attr_equality(other, attributes)

@@ -1,6 +1,6 @@
 import numpy as np
 
-from base import Base
+from dfn import Base
 
 
 class FractureNetwork(Base):
@@ -79,4 +79,4 @@ class FractureNetwork(Base):
 
     def __eq__(self, other):
         attributes = ['connectivity', 'length', 'thickness', 'width']
-        return _check_attr_equality(self, other, attributes)
+        return self._check_attr_equality(other, attributes)
