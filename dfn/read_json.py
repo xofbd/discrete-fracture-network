@@ -15,7 +15,7 @@ def read_json(func):
 
 
 @read_json
-def read_fluid(data):
+def read_fluid_json(data):
     return Fluid(**data)
 
 
