@@ -15,6 +15,7 @@ values are taken from the source above. The plotted results should match the
 results in Figure 10a of the source.
 """
 
+from future import print_function
 from math import log, sqrt
 
 import matplotlib.pyplot as plt
@@ -31,7 +32,7 @@ def run_simulations(network, t, z, w_0, lognormal_sigma, segment):
     mu = log(w_0 / sqrt(1 + lognormal_sigma**2))
     var = log(1 + lognormal_sigma**2)
 
-    for i in xrange(n_sims):
+    for i in range(n_sims):
         # randomly sample apertures
         w = w_0 * np.random.lognormal(mean=mu, sigma=sqrt(var), size=n_segs)
         network.width = w
@@ -115,4 +116,4 @@ if __name__ == '__main__':
                                               sigma, 5)
     plot_results(sigma_over_w_0, Theta_results)
 
-    print "Elapsed time: {0:.4f} seconds".format(time.time() - start_time)
+    print("Elapsed time: {0:.4f} seconds".format(time.time() - start_time))

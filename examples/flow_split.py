@@ -9,6 +9,7 @@ each with a different set of aperture values, sampled from a log-normal
 distribution.
 """
 
+from future import print_function
 from math import log, sqrt
 
 import numpy as np
@@ -28,7 +29,7 @@ def calculate_flow_fraction(network, essential_bc, point_sources):
     var = log(1 + sigma_over_w_0**2)
     w = np.random.lognormal(mu, sqrt(var), (4, n_sims))
 
-    for i in xrange(n_sims):
+    for i in range(n_sims):
         network.width = w[:, i]
         network.calculate_flow(fluid, essential_bc, point_sources)
         m = network.mass_flow
@@ -78,4 +79,4 @@ if __name__ == '__main__':
     plt.ylabel('probability density (-)')
     f.show()
 
-    print "Elapsed time: {:.5} seconds".format(time.time() - start_time)
+    print("Elapsed time: {:.5} seconds".format(time.time() - start_time))

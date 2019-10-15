@@ -134,8 +134,8 @@ class FractureNetworkFlow(FractureNetwork):
         f = self._assemble_f(point_sources)
 
         # apply essential boundary conditions (Dirichlet)
-        nodes = essential_bc.keys()
-        values = essential_bc.values()
+        nodes = list(essential_bc.keys())
+        values = list(essential_bc.values())
 
         f -= np.dot(D[:, nodes], values)
         f[nodes] = values
@@ -167,8 +167,8 @@ class FractureNetworkFlow(FractureNetwork):
 
         f = np.zeros(self.n_nodes)
 
-        nodes = point_sources.keys()
-        values = point_sources.values()
+        nodes = list(point_sources.keys())
+        values = list(point_sources.values())
         f[nodes] = values
 
         return f
