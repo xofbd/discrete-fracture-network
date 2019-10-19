@@ -212,3 +212,12 @@ class FractureNetworkFlow(FractureNetwork):
         self.corrected_network = True
 
         return self
+
+    def __eq__(self, other):
+        if not super(FractureNetworkFlow).__eq__(self, other):
+            return False
+
+        attributes = ['fluid', 'conductance', 'pressure', 'mass',
+                      'corrected_network']
+
+        return _check_attr_equality(self, other, attributes)

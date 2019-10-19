@@ -1,6 +1,7 @@
 import json
 
-from dfn import FractureNetwork, FractureNetworkFlow, FractureNetworkThermal
+from dfn import (Fluid, FractureNetwork, FractureNetworkFlow,
+                 FractureNetworkThermal)
 
 
 def read_json(func):
@@ -11,6 +12,11 @@ def read_json(func):
 
         return func(data)
     return wrapper
+
+
+@read_json
+def read_fluid(data):
+    return Fluid(**data)
 
 
 @read_json

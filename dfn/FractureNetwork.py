@@ -1,7 +1,9 @@
 import numpy as np
 
+from base import Base
 
-class FractureNetwork(object):
+
+class FractureNetwork(Base):
 
     """Discrete fracture network model.
 
@@ -74,3 +76,7 @@ class FractureNetwork(object):
             raise ValueError(error_str_2.format(", ".join(bad_params)))
 
         return self
+
+    def __eq__(self, other):
+        attributes = ['connectivity', 'length', 'thickness', 'width']
+        return _check_attr_equality(self, other, attributes)
