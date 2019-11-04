@@ -1,6 +1,6 @@
-.PHONY: build
+.PHONY: install
 
-build:
+install:
 	pip install .
 
 test:
