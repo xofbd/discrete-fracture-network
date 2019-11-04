@@ -1,6 +1,7 @@
 import json
 
-from dfn import FractureNetwork, FractureNetworkFlow, FractureNetworkThermal
+from dfn import (Fluid, FractureNetwork, FractureNetworkFlow,
+                 FractureNetworkThermal)
 
 
 def read_json(func):
@@ -14,15 +15,20 @@ def read_json(func):
 
 
 @read_json
+def read_fluid_json(data):
+    return Fluid(**data)
+
+
+@read_json
 def read_network_json(data):
     return FractureNetwork(**data)
 
 
 @read_json
-def read_flow_json(path_to_file):
+def read_flow_json(data):
     return FractureNetworkFlow(**data)
 
 
 @read_json
-def read_thermal_json(path_to_file):
+def read_thermal_json(data):
     return FractureNetworkThermal(**data)

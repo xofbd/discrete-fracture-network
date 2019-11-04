@@ -1,0 +1,8 @@
+{
+    "connectivity": [[0, 1], [1, 2], [1, 2], [2, 3]],
+    "length": [1, 2, 3, 4],
+    "thickness": [1, 2, 3, 4],
+    "width": [1, 2, 3, 4],
+    "thermal_cond": 2.9,
+    "thermal_diff": 1.0229276895943562e-06
+}

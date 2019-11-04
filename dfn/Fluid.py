@@ -1,4 +1,7 @@
-class Fluid(object):
+from dfn import Base
+
+
+class Fluid(Base):
 
     """Fluid to flow in the fracture network.
 
@@ -20,3 +23,7 @@ class Fluid(object):
         self.rho = density
         self.mu = viscosity
         self.c_f = heat_capacity
+
+    def __eq__(self, other):
+        attributes = ['rho', 'mu', 'c_f']
+        return self._check_attr_equality(other, attributes)
