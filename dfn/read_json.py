@@ -25,10 +25,10 @@ def read_network_json(data):
 
 
 @read_json
-def read_flow_json(path_to_file):
+def read_flow_json(data):
     return FractureNetworkFlow(**data)
 
 
 @read_json
-def read_thermal_json(path_to_file):
+def read_thermal_json(data):
     return FractureNetworkThermal(**data)
