@@ -22,7 +22,7 @@ You can easily download and install these packages by running ``pip install pack
 
 Installing
 ----------
-To install the package, clone the repo and run ``python setup.py install``.
+To install the package, clone the repo and run ``python setup.py install`` or ``make install``
 
 Usage
 -----
@@ -38,7 +38,7 @@ For more extensive examples of usage, look at the scripts in the ``example`` dir
 
 Tests
 -----
-There are several files in the ``dfn/test`` that perform unit testing.
+There are several files in the ``dfn/test`` that perform unit testing. You can run those tests by running ``make test``
 
 License
 -------
