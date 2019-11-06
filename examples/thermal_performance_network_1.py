@@ -21,23 +21,23 @@ import numpy as np
 from dfn import Fluid, FractureNetworkThermal
 
 
-# fluid properties
+# Fluid properties
 cp_w = 4300.0
 rho_w = 1000.0
 mu_w = 1E-3
 
-# reservoir properties
+# Reservoir properties
 k_r = 2.9
 cp_r = 1050.0
 rho_r = 2700.0
 alpha_r = k_r / (rho_r * cp_r)
 
-# operational properties
+# Operational properties
 m_inj = 50.0
 P_inj = 0.0
 t_end = 86400 * 365.25 * 20
 
-# network properties
+# Network properties
 n_segs = 6
 conn = [(0, 1), (1, 2), (1, 3), (2, 4), (3, 4), (4, 5)]
 L = [100, 500, 500, 500, 500, 100]
@@ -47,16 +47,16 @@ A = (2 * L[0] + 4 * L[1]) * H[0]
 n_inj = 0
 n_prod = 5
 
-# create network object
+# Create network object
 fluid = Fluid(density=rho_w, viscosity=mu_w, heat_capacity=cp_w)
 network = FractureNetworkThermal(conn, L, H, w, k_r, alpha_r)
 
-# calculate flow in the network
+# Calculate flow in the network
 essential_bc = {n_inj: P_inj}
 point_sources = {n_prod: -m_inj}
 network.calculate_flow(fluid, essential_bc, point_sources, correct=False)
 
-# calculate temperature and plot results
+# Calculate temperature and plot results
 segs_to_plot = (0, 1, 3, 5)
 t = t_end * np.linspace(1.0 / 100, 1, num=100)
 tau = k_r * rho_r * cp_r / (cp_w * m_inj / A)**2
@@ -70,7 +70,7 @@ for i, seg in enumerate(segs_to_plot):
 
 plt.ylim((0, 1))
 plt.xlim((0, 3))
-plt.ylabel('$\Theta$ (-)')
-plt.xlabel('$\tau$ (-)')
+plt.ylabel(r'$\Theta$ (-)')
+plt.xlabel(r'$\tau$ (-)')
 plt.minorticks_on()
 f.show()

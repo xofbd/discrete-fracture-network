@@ -62,13 +62,13 @@ class FractureNetwork(Base):
         error_str_2 = ("The size of parameter(s) {} needs to be equal to the "
                        "number of segments as indicated by the connectivity.")
 
-        # parameters must be positive
+        # Parameters must be positive
         bad_params = [p for p in params if (getattr(self, p) <= 0).any()]
 
         if len(bad_params) > 0:
             raise ValueError(error_str_1.format(", ".join(bad_params)))
 
-        # parameter size needs to be equal to the number of segments
+        # Parameter size needs to be equal to the number of segments
         bad_params = [p for p in params
                       if getattr(self, p).size != self.n_segments]
 

@@ -96,7 +96,7 @@ class FractureNetworkFlow(FractureNetwork):
             Returns self.
         """
 
-        # check inputs
+        # Check inputs
         ebc_node_set = set(essential_bc.keys())
         ps_node_set = set(point_sources.keys())
         problem_nodes = ebc_node_set.intersection(ps_node_set)
@@ -107,13 +107,13 @@ class FractureNetworkFlow(FractureNetwork):
                          "nodes are {}.").format(list(problem_nodes))
             raise ValueError(error_str)
 
-        # solve for pressure
+        # Solve for pressure
         self.fluid = fluid
         self._solve_pressure(essential_bc, point_sources)
         outlets = self.connectivity[:, 1]
         inlets = self.connectivity[:, 0]
 
-        # calculate mass flow
+        # Calculate mass flow
         Delta_P = self.pressure[outlets] - self.pressure[inlets]
         self.mass_flow = -self.conductance * Delta_P
 
@@ -133,7 +133,7 @@ class FractureNetworkFlow(FractureNetwork):
         D = self._assemble_D()
         f = self._assemble_f(point_sources)
 
-        # apply essential boundary conditions (Dirichlet)
+        # Apply essential boundary conditions (Dirichlet)
         nodes = list(essential_bc.keys())
         values = list(essential_bc.values())
 
@@ -155,7 +155,7 @@ class FractureNetworkFlow(FractureNetwork):
         elemental_D = np.array([[1, -1], [-1, 1]])
         self._calculate_conductance()
 
-        # assemble the global conductance matrix
+        # Assemble the global conductance matrix
         for i, seg in enumerate(self.connectivity):
             D_e = self.conductance[i] * elemental_D
             D[np.ix_(seg, seg)] += D_e
@@ -197,13 +197,13 @@ class FractureNetworkFlow(FractureNetwork):
             Returns self.
         """
 
-        # raise error if mass flow needs to be calculated
+        # Raise error if mass flow needs to be calculated
         if self.mass_flow is None:
             error_str = ("Network has not had the mass flow calculated, call "
                          "'calculate_flow' before calling this method.")
             raise TypeError(error_str)
 
-        # flip nodes if the direction is wrong (negative flow)
+        # Flip nodes if the direction is wrong (negative flow)
         for i, seg in enumerate(self.connectivity):
             if self.mass_flow[i] < 0:
                 self.connectivity[i] = seg[::-1]
