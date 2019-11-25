@@ -97,7 +97,7 @@ class FractureNetworkThermal(FractureNetworkFlow):
             Dimensionless temperature for each distance and time pairing.
         """
 
-        # raise error from mass flow type or value errors
+        # Raise error from mass flow type or value errors
         self._check_if_calculated()
         self._check_if_neg_flow()
 
@@ -110,7 +110,7 @@ class FractureNetworkThermal(FractureNetworkFlow):
         z, t = np.meshgrid(distance, time)
         inlet = self.connectivity[segment, 0]
 
-        # create local variables for ease
+        # Create local variables for ease
         chi = self._mass_contribution()
         k_r = self.thermal_cond
         alpha_r = self.thermal_diff
@@ -119,12 +119,12 @@ class FractureNetworkThermal(FractureNetworkFlow):
         L = self.length
         cp_f = self.fluid.c_f
 
-        # useful dimensionless parameters
+        # Useful dimensionless parameters
         beta = 2 * k_r * H / (m * cp_f)
         xi = np.einsum('i,jk -> ijk', beta * L, 1 / (2 * np.sqrt(alpha_r * t)))
         xi_segment = beta[segment] * z / (2 * np.sqrt(alpha_r * t))
 
-        # loop through each path to the segment
+        # Loop through each path to the segment
         Theta = 0
         paths = self.find_paths(inj_nodes, inlet)
 
@@ -222,14 +222,14 @@ class FractureNetworkThermal(FractureNetworkFlow):
             is a tuple containing the segments that constitute the path.
         """
 
-        # raise error from mass flow type or value errors
+        # Raise error from mass flow type or value errors
         self._check_if_calculated()
         self._check_if_neg_flow()
 
         if self.graph is None:
             self._construct_graph()
 
-        # properly treat single node cases
+        # Properly treat single node cases
         if isinstance(inj_nodes, int):
             inj_nodes = [inj_nodes]
 
@@ -242,11 +242,11 @@ class FractureNetworkThermal(FractureNetworkFlow):
             temp = map(tuple, temp)
             path_nodes = path_nodes.union(set(temp))
 
-        # get segments in each path described by the nodes
+        # Get segments in each path described by the nodes
         path_segments = []
 
         for nodes in path_nodes:
-            # get all segments described by each inlet-outlet node pairing
+            # Get all segments described by each inlet-outlet node pairing
             segment_choices = []
 
             for i in range(len(nodes) - 1):
@@ -258,7 +258,7 @@ class FractureNetworkThermal(FractureNetworkFlow):
                 segments = [val['index'] for val in d.values()]
                 segment_choices.append(segments)
 
-            # transform an array of segment options to all combination of paths
+            # Transform an array of segment options to all combination of paths
             # of those options. For example, transform [[0], [1, 2]] to
             # [(0, 1), (0, 2)]. The array [[0], [1, 2]] means that the fluid
             # can flow through segment 0 and then either segment 1 or 2.

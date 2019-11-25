@@ -22,23 +22,23 @@ import numpy as np
 from dfn import Fluid, FractureNetworkThermal
 
 
-# fluid properties
+# Fluid properties
 cp_w = 4300.0
 rho_w = 1000.0
 mu_w = 1E-3
 
-# reservoir properties
+# Reservoir properties
 k_r = 2.9
 cp_r = 1050.0
 rho_r = 2700.0
 alpha_r = k_r / (rho_r * cp_r)
 
-# operational properties
+# Operational properties
 m_inj = 50.0
 P_inj = 0
 t_end = 86400 * 365.25 * 40
 
-# network properties
+# Network properties
 n_segs = 14
 conn = [(0, 1), (1, 2), (2, 3), (1, 4), (2, 5), (3, 6),
         (4, 5), (5, 6), (4, 7), (5, 8), (6, 9), (7, 8), (8, 9), (9, 10)]
@@ -51,16 +51,16 @@ w = 1E-3 * np.ones(n_segs)
 n_inj = 0
 n_prod = 10
 
-# create network object
+# Create network object
 fluid = Fluid(density=rho_w, viscosity=mu_w, heat_capacity=cp_w)
 network = FractureNetworkThermal(conn, L, H, w, k_r, alpha_r)
 
-# calculate flow in the network
+# Calculate flow in the network
 essential_bc = {n_inj: P_inj}
 point_sources = {n_prod: -m_inj}
 network.calculate_flow(fluid, essential_bc, point_sources, correct=False)
 
-# calculate temperature and plot results
+# Calculate temperature and plot results
 segs_to_plot = (0, 1, 2, 5, 10, 13)
 t = t_end * np.linspace(1.0 / 100, 1, num=100)
 tau = k_r * rho_r * cp_r / (cp_w * m_inj / A)**2
