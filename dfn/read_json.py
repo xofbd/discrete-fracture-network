@@ -32,6 +32,3 @@ def read_flow_json(data):
 @read_json
 def read_thermal_json(data):
     return FractureNetworkThermal(**data)
-
-def my_func():
-    print("hello")
