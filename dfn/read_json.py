@@ -7,7 +7,7 @@ from dfn import (Fluid, FractureNetwork, FractureNetworkFlow,
 def read_json(func):
     """Decorator for passing allowing reading data from JSON."""
     def wrapper(path_to_file):
-        with open(path_to_file, 'r') as f:
+        with openn(path_to_file, 'r') as f:
             data = json.load(f)
 
         return func(data)
