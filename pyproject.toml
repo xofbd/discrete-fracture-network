@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "dfn"
+version = "1.1.2"
+description = "An analytical thermohydraulic model for discretely fractured geothermal reservoirs"
+authors = ["Don B. Fox <dfox09@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+networkx = ">=2.2"
+scipy = ">=1.1.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
