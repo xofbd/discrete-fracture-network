@@ -7,25 +7,32 @@ all: clean install
 poetry.lock: pyproject.toml
 	poetry lock
 
-.make.install: poetry.lock
+.make.install.prod: poetry.lock
+	poetry install --no-dev
+	rm -f .make.install.prod
+	touch $@
+
+.make.install.dev: poetry.lock
 	poetry install
+	rm -f .make.install.dev
 	touch $@
 
 .PHONY: install
-install: .make.install
+install:
+	pip install dfn
 
 .PHONY: tests
 tests: test-lint test-unit
 
 .PHONY: test-unit
-test-unit: .make.install
+test-unit: .make.install.dev
 	$(POETRY_RUN) python3 -m unittest -v
 
 .PHONY: test-lint
-test-lint: .make.install
+test-lint: .make.install.dev
 	$(POETRY_RUN) flake8 dfn tests
 
 .PHONY: clean
 clean:
-	rm -f .make.install
+	rm -f .make.*
 	find . | grep __pycache__ | xargs rm -rf
