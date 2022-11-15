@@ -265,7 +265,7 @@ class TestFractureNetworkThermal(unittest.TestCase):
         C_6 = chi_2[0] * chi_2[1] * chi_2[4] * chi_2[9] * chi_2[12]
         xi_seg = beta_2[-1] * z / (2 * np.sqrt(network_2.thermal_diff * t))
 
-        Theta_2 =  C_1 * erf(a + xi_seg) + C_2 * erf(b + xi_seg) + \
+        Theta_2 = C_1 * erf(a + xi_seg) + C_2 * erf(b + xi_seg) + \
             C_3 * erf(c + xi_seg) + C_4 * erf(d + xi_seg) + \
             C_5 * erf(e + xi_seg) + C_6 * erf(f + xi_seg)
 
@@ -277,6 +277,7 @@ class TestFractureNetworkThermal(unittest.TestCase):
 
         self.assertAlmostEqual((diff_1**2).sum() / (Theta_1**2).sum(), 0, 12)
         self.assertAlmostEqual((diff_2**2).sum() / (Theta_2**2).sum(), 0, 12)
+
 
 if __name__ == '__main__':
     unittest.main()

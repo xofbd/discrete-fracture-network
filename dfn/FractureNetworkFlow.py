@@ -59,7 +59,13 @@ class FractureNetworkFlow(FractureNetwork):
         self.mass_flow = None
         self.corrected_network = False
 
-    def calculate_flow(self, fluid, essential_bc, point_sources, correct=False):
+    def calculate_flow(
+            self,
+            fluid,
+            essential_bc,
+            point_sources,
+            correct=False
+    ):
         """Calculate the mass flow throughout the fracture network.
 
         The mass flow is calculated by first finding the pressure at each node.
