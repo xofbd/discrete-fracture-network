@@ -40,5 +40,6 @@ class TestFractureNetwork(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     network._check_parameters()
 
+
 if __name__ == '__main__':
     unittest.main()

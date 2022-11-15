@@ -19,4 +19,17 @@ if sys.version_info >= (3, 8):
 else:
     import importlib_metadata as metadata
 
+__all__ = [
+        "Base",
+        "Fluid",
+        "FractureNetwork",
+        "FractureNetworkFlow",
+        "FractureNetworkThermal",
+        "read_json",
+        "read_flow_json",
+        "read_fluid_json",
+        "read_network_json",
+        "read_thermal_json",
+    ]
+
 __version__ = metadata.version("dfn")

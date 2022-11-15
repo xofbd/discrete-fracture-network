@@ -32,5 +32,6 @@ class TestFluid(unittest.TestCase):
         """Test heat capacity attribute."""
         self.assertEqual(self.c_f, self.fluid_2.c_f)
 
+
 if __name__ == '__main__':
     unittest.main()
