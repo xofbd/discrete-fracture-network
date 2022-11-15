@@ -14,15 +14,18 @@ Fox, D. B., D. L. Koch, and J. W. Tester (2016), An analytical thermohydraulic
 model for discretely fractured geothermal reservoirs, Water Resources Research,
 52, 6792-6817, doi:10.1002/2016WR018666
 
-Prerequisites
--------------
-You will need to have the following Python packages installed:
-``networkx, numpy, scipy``.
-You can easily download and install these packages by running ``pip install package-name``, where "package-name" is the name of the desired package.
-
-Installing
+Installation
 ----------
-To install the package, clone the repo and run ``python setup.py install`` or ``make install``
+To install, run:
+```bash
+pip install git+https://github.com/xofbd/discrete-fracture-network.git
+```
+or
+```
+git clone https://github.com/xofbd/discrete-fracture-network.git
+pip install good-commit-message
+```
+Note: you can use the `--user` flag for a local installation as opposed to system-wide.
 
 Usage
 -----
@@ -38,7 +41,7 @@ For more extensive examples of usage, look at the scripts in the ``example`` dir
 
 Tests
 -----
-There are several files in the ``dfn/test`` that perform unit testing. You can run those tests by running ``make test``
+Unit tests are in `tests` and can be run with `make test-unit`. To lint, run `make test-lint`. Both unit testing and linting can be run with `make tests`.
 
 License
 -------
