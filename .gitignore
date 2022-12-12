@@ -4,5 +4,7 @@
 /*.egg-info
 /*.egg
 TODO
+.coverage
 .make.*
 .tox
+coverage.xml
