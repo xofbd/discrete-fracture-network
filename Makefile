@@ -9,12 +9,12 @@ poetry.lock: pyproject.toml
 
 .make.install.prod: poetry.lock
 	poetry install --no-dev
-	rm -f .make.install.prod
+	rm -f .make.install.dev
 	touch $@
 
 .make.install.dev: poetry.lock
 	poetry install
-	rm -f .make.install.dev
+	rm -f .make.install.prod
 	touch $@
 
 .PHONY: install
