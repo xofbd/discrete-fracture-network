@@ -16,16 +16,22 @@ model for discretely fractured geothermal reservoirs, Water Resources Research,
 
 Installation
 ----------
-To install, run:
-```bash
-pip install git+https://github.com/xofbd/discrete-fracture-network.git
-```
-or
-```
-git clone https://github.com/xofbd/discrete-fracture-network.git
-pip install good-commit-message
-```
-Note: you can use the `--user` flag for a local installation as opposed to system-wide.
+To install, run::
+
+    pip install git+https://github.com/xofbd/discrete-fracture-network.git
+
+or::
+
+    git clone https://github.com/xofbd/discrete-fracture-network.git
+    pip install discrete-fracture-network/
+
+or::
+
+    git clone https://github.com/xofbd/discrete-fracture-network.git
+    cd discrete-fracture-network/
+    make install
+
+Note: you can use the ``--user`` flag for a local installation as opposed to system-wide.
 
 Usage
 -----
@@ -41,7 +47,7 @@ For more extensive examples of usage, look at the scripts in the ``example`` dir
 
 Tests
 -----
-Unit tests are in `tests` and can be run with `make test-unit`. To lint, run `make test-lint`. Both unit testing and linting can be run with `make tests`.
+Unit tests are in ``tests`` and can be run with ``make test-unit``. To lint, run ``make test-lint``. Both unit testing and linting can be run with ``make tests``.
 
 License
 -------
