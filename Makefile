@@ -32,7 +32,12 @@ test-unit: .make.install.dev
 test-lint: .make.install.dev
 	$(POETRY_RUN) flake8 dfn tests
 
+.PHONY: tox
+tox: .make.install.dev
+	$(POETRY_RUN) tox
+
 .PHONY: clean
 clean:
 	rm -f .make.*
+	rm -rf .tox
 	find . | grep __pycache__ | xargs rm -rf
