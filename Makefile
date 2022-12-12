@@ -19,7 +19,7 @@ poetry.lock: pyproject.toml
 
 .PHONY: install
 install:
-	pip install dfn
+	pip install .
 
 .PHONY: tests
 tests: test-lint test-unit
