@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dfn"
-version = "1.1.2"
+version = "1.2.0"
 description = "An analytical thermohydraulic model for discretely fractured geothermal reservoirs"
 authors = ["Don B. Fox <dfox09@gmail.com>"]
 license = "MIT"
