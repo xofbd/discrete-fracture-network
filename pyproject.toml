@@ -6,10 +6,10 @@ authors = ["Don B. Fox <dfox09@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 importlib-metadata = {version = "<4.3", python = "3.7"}
 networkx = ">=2.2"
-scipy = ">=1.1.0"
+scipy = ">=1.8.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "5.0.4"
