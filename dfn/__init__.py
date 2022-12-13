@@ -1,4 +1,4 @@
-import sys
+from importlib import metadata
 
 from dfn.base import Base
 from dfn.Fluid import Fluid
@@ -13,11 +13,6 @@ from dfn.read_json import (
         read_thermal_json
     )
 
-
-if sys.version_info >= (3, 8):
-    from importlib import metadata
-else:
-    import importlib_metadata as metadata
 
 __all__ = [
         "Base",
