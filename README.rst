@@ -2,7 +2,7 @@
 
 .. |Python| image:: https://shields.io/badge/Python-3.8%20%7C%203.9%20%7C%203.10-blue
 .. |Release| image:: https://img.shields.io/github/v/release/xofbd/discrete-fracture-network.svg
-   :target: https://github.com/xofbd/discrete-fracture-network.svg/releases
+   :target: https://github.com/xofbd/discrete-fracture-network/releases
 .. |License| image:: https://img.shields.io/github/license/xofbd/discrete-fracture-network.svg
    :target: https://opensource.org/licenses/MIT
 .. |CI| image:: https://github.com/xofbd/discrete-fracture-network/actions/workflows/ci.yaml/badge.svg?branch=master
